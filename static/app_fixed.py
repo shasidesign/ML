@@ -13,8 +13,7 @@ import matplotlib.pyplot as plt
 app = Flask(__name__)
 
 client = OpenAI(
-    api_key="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"
-)
+api_key=os.getenv("OPENAI_API_KEY"))
 
 app.secret_key = 'fashion_ai_secret'
 app.config['SECRET_KEY'] = 'fashion_ai_secret'
