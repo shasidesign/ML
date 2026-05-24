@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saved Favourites — AI Fashion</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{--bg:#050A14;--surface:#0D1525;--surface2:#131D30;--border:rgba(99,179,237,0.12);--accent:#63B3ED;--accent2:#9F7AEA;--accent3:#FC8181;--text:#E2E8F0;--muted:#718096;--success:#68D391;--warning:#F6AD55;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;}
+  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .nav{display:flex;gap:4px;}
+  .nav a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;transition:all 0.2s;}
+  .nav a:hover{color:var(--text);background:var(--surface2);}
+  .nav a.active{color:var(--accent);background:rgba(99,179,237,0.08);}
+  .container{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+  .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;}
+  .page-title{font-size:1.75rem;font-weight:700;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .page-sub{font-size:0.8rem;color:var(--muted);margin-top:4px;}
+  .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
+  .btn:hover{opacity:0.85;}
+  .controls{display:flex;gap:10px;margin-bottom:1.5rem;align-items:center;flex-wrap:wrap;}
+  .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-family:inherit;font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+  .filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(99,179,237,0.06);}
+  .sort-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--muted);font-family:inherit;font-size:0.8rem;outline:none;margin-left:auto;}
+
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+  .fav-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;
+    transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s;cursor:pointer;
+  }
+  .fav-card:hover{transform:translateY(-4px);border-color:rgba(99,179,237,0.3);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+  .card-visual{
+    height:180px;display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .card-emoji{font-size:5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));}
+  .card-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,transparent 40%,rgba(13,21,37,0.8));pointer-events:none;}
+  .card-top-row{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;}
+  .style-tag{padding:4px 10px;border-radius:20px;font-size:0.7rem;font-weight:600;}
+  .tag-casual{background:rgba(99,179,237,0.2);color:var(--accent);border:1px solid rgba(99,179,237,0.3);}
+  .tag-formal{background:rgba(159,122,234,0.2);color:var(--accent2);border:1px solid rgba(159,122,234,0.3);}
+  .tag-sporty{background:rgba(104,211,145,0.2);color:var(--success);border:1px solid rgba(104,211,145,0.3);}
+  .heart-btn{
+    width:32px;height:32px;border-radius:50%;background:rgba(252,129,129,0.15);border:1px solid rgba(252,129,129,0.3);
+    display:flex;align-items:center;justify-content:center;color:var(--accent3);cursor:pointer;
+    transition:all 0.2s;font-size:14px;
+  }
+  .heart-btn:hover{background:rgba(252,129,129,0.3);transform:scale(1.1);}
+  .card-body{padding:1.25rem;}
+  .card-name{font-size:0.95rem;font-weight:600;margin-bottom:4px;}
+  .card-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+  .card-meta{display:flex;justify-content:space-between;align-items:center;}
+  .card-tags{display:flex;gap:6px;flex-wrap:wrap;}
+  .mini-tag{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--muted);}
+  .card-score{font-size:0.78rem;font-weight:600;color:var(--warning);}
+  .card-footer{padding:0 1.25rem 1.25rem;display:flex;gap:8px;}
+  .card-btn{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px;font-family:inherit;font-size:0.78rem;color:var(--muted);cursor:pointer;transition:all 0.2s;font-weight:500;}
+  .card-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .card-btn.primary{background:linear-gradient(135deg,rgba(99,179,237,0.15),rgba(159,122,234,0.15));border-color:rgba(99,179,237,0.25);color:var(--accent);}
+
+  .empty-state{text-align:center;padding:4rem;color:var(--muted);}
+  .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.3;}
+
+  @media(max-width:768px){.nav{display:none;}.cards-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><div class="logo-icon">👗</div>AI Fashion</div>
+  <nav class="nav">
+    <a href="#">Home</a>
+    <a href="#">Dashboard</a>
+    <a href="#">History</a>
+    <a href="#" class="active">Favourites</a>
+    <a href="#">AI Chat</a>
+  </nav>
+  <div style="display:flex;gap:8px;">
+    <span style="background:rgba(99,179,237,0.1);color:var(--accent);border:1px solid rgba(99,179,237,0.2);padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;" id="savedCount">8 Saved</span>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Saved Favourites</h1>
+      <p class="page-sub">Your curated AI-recommended outfits &amp; styles</p>
+    </div>
+    <button class="btn"><i class="fas fa-plus" style="margin-right:6px;font-size:12px;"></i>Add Look</button>
+  </div>
+
+  <div class="controls">
+    <button class="filter-btn active" onclick="filterCards('all',this)">All Styles</button>
+    <button class="filter-btn" onclick="filterCards('casual',this)">Casual</button>
+    <button class="filter-btn" onclick="filterCards('formal',this)">Formal</button>
+    <button class="filter-btn" onclick="filterCards('sporty',this)">Sporty</button>
+    <select class="sort-select" onchange="sortCards(this.value)">
+      <option value="date">Sort: Latest</option>
+      <option value="score">Sort: Highest Match</option>
+      <option value="name">Sort: A–Z</option>
+    </select>
+  </div>
+
+  <div class="cards-grid" id="cardsGrid"></div>
+</div>
+
+<script>
+const outfits = [
+  {id:1,name:'Minimal Monochrome',desc:'All-white ensemble with structured blazer and tapered trousers. Perfect for smart-casual office days.',emoji:'🤍',style:'formal',tags:['Slim','Office','Summer'],score:97,bg:'linear-gradient(135deg,#1a2540,#2d3a5c)',date:5},
+  {id:2,name:'Urban Casual Fit',desc:'Oversized graphic tee, cargo trousers, and chunky sneakers for a laid-back street style.',emoji:'👕',style:'casual',tags:['Athletic','Street','Spring'],score:94,bg:'linear-gradient(135deg,#0f2027,#1a3a4a)',date:2},
+  {id:3,name:'Sport Performance Set',desc:'Moisture-wicking compression tee with track pants. Optimised for gym and outdoor activities.',emoji:'⚡',style:'sporty',tags:['Athletic','Gym','All-season'],score:96,bg:'linear-gradient(135deg,#0a1628,#0d2e1f)',date:8},
+  {id:4,name:'Earth Tone Layers',desc:'Terracotta linen shirt, beige trousers, and brown leather loafers. Timeless warm-tone styling.',emoji:'🧡',style:'casual',tags:['Slim','Autumn','Minimal'],score:91,bg:'linear-gradient(135deg,#2a1a0a,#3d2510)',date:1},
+  {id:5,name:'Classic Navy Suit',desc:'Single-breasted navy suit with white pocket square. A timeless formal look for important occasions.',emoji:'🤵',style:'formal',tags:['Athletic','Formal','Business'],score:98,bg:'linear-gradient(135deg,#0a1428,#162240)',date:6},
+  {id:6,name:'Athleisure Transit',desc:'Slim joggers with a premium quarter-zip and minimalist sneakers — comfort meets street style.',emoji:'🏃',style:'sporty',tags:['Slim','Casual-sport','Winter'],score:89,bg:'linear-gradient(135deg,#141428,#1e1e3a)',date:3},
+  {id:7,name:'Linen Summer Breeze',desc:'Light linen short-sleeve shirt with chino shorts. Perfect for hot weather and casual outdoor events.',emoji:'🌿',style:'casual',tags:['Slim','Summer','Outdoor'],score:92,bg:'linear-gradient(135deg,#0a2018,#143826)',date:4},
+  {id:8,name:'Charcoal Power Look',desc:'Charcoal grey slim-fit suit with a black turtleneck. Sophisticated and modern for evening events.',emoji:'🖤',style:'formal',tags:['Athletic','Evening','Winter'],score:95,bg:'linear-gradient(135deg,#141414,#252525)',date:7},
+];
+
+let currentFilter = 'all';
+let currentSort = 'date';
+
+function tagClass(s){ return s==='formal'?'tag-formal':s==='sporty'?'tag-sporty':'tag-casual'; }
+function styleLabel(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function renderCards() {
+  let data = [...outfits];
+  if(currentFilter !== 'all') data = data.filter(o=>o.style===currentFilter);
+  if(currentSort==='score') data.sort((a,b)=>b.score-a.score);
+  else if(currentSort==='name') data.sort((a,b)=>a.name.localeCompare(b.name));
+  else data.sort((a,b)=>a.date-b.date);
+
+  const grid = document.getElementById('cardsGrid');
+  grid.innerHTML = '';
+  data.forEach((o,i) => {
+    const card = document.createElement('div');
+    card.className = 'fav-card';
+    card.style.animationDelay = (i*0.06)+'s';
+    card.innerHTML = `
+      <div class="card-visual" style="background:${o.bg};">
+        <span class="card-emoji">${o.emoji}</span>
+        <div class="card-overlay"></div>
+        <div class="card-top-row">
+          <span class="style-tag ${tagClass(o.style)}">${styleLabel(o.style)}</span>
+          <button class="heart-btn" onclick="event.stopPropagation();removeFav(${o.id},this)"><i class="fas fa-heart"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${o.name}</div>
+        <div class="card-desc">${o.desc}</div>
+        <div class="card-meta">
+          <div class="card-tags">${o.tags.map(t=>`<span class="mini-tag">${t}</span>`).join('')}</div>
+          <div class="card-score"><i class="fas fa-star" style="font-size:10px;margin-right:3px;"></i>${o.score}%</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="card-btn">Share</button>
+        <button class="card-btn primary">View Look</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function filterCards(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+function sortCards(val) { currentSort = val; renderCards(); }
+
+function removeFav(id, btn) {
+  const idx = outfits.findIndex(o=>o.id===id);
+  if(idx>-1) { outfits.splice(idx,1); renderCards(); }
+  const n = outfits.length;
+  document.getElementById('savedCount').textContent = n + ' Saved';
+}
+
+renderCards();
+</script>
+</body>
+</html>

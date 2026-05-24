@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Fashion Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg:#050A14;--surface:#0D1525;--surface2:#131D30;
+    --border:rgba(99,179,237,0.12);--accent:#63B3ED;--accent2:#9F7AEA;
+    --accent3:#FC8181;--text:#E2E8F0;--muted:#718096;
+    --success:#68D391;--warning:#F6AD55;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;letter-spacing:-0.02em;}
+  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .nav{display:flex;gap:4px;}
+  .nav a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;transition:all 0.2s;}
+  .nav a:hover{color:var(--text);background:var(--surface2);}
+  .nav a.active{color:var(--accent);background:rgba(99,179,237,0.08);}
+  .topbar-right{display:flex;align-items:center;gap:10px;}
+  .avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
+  .notif{width:34px;height:34px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;position:relative;color:var(--muted);}
+  .notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--accent3);}
+
+  .container{max-width:1300px;margin:0 auto;padding:2rem;}
+  .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;}
+  .page-title{font-size:1.75rem;font-weight:700;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .page-sub{font-size:0.8rem;color:var(--muted);margin-top:4px;}
+  .header-right{display:flex;gap:8px;align-items:center;}
+  .date-chip{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:0.78rem;color:var(--muted);}
+  .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:2rem;}
+  .kpi{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;
+    position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s;cursor:default;
+  }
+  .kpi:hover{transform:translateY(-2px);border-color:rgba(99,179,237,0.25);}
+  .kpi-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;}
+  .kpi-label{font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;}
+  .kpi-value{font-size:2rem;font-weight:700;letter-spacing:-0.04em;line-height:1;}
+  .kpi-trend{margin-top:8px;font-size:0.75rem;display:flex;align-items:center;gap:4px;}
+  .up{color:var(--success);} .down{color:var(--accent3);}
+  .kpi-sparkline{position:absolute;bottom:0;right:0;opacity:0.15;}
+
+  .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;}
+  .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;}
+  .chart-title{font-size:0.9rem;font-weight:600;}
+  .chart-sub{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+  .tab-row{display:flex;gap:4px;}
+  .tab{background:none;border:1px solid transparent;border-radius:7px;padding:4px 10px;font-family:inherit;font-size:0.75rem;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+  .tab.active,.tab:hover{background:rgba(99,179,237,0.08);color:var(--accent);border-color:rgba(99,179,237,0.2);}
+
+  .activity-list{display:flex;flex-direction:column;gap:0;}
+  .activity-item{
+    display:flex;align-items:center;gap:12px;padding:12px 0;
+    border-bottom:1px solid rgba(99,179,237,0.05);
+  }
+  .activity-item:last-child{border-bottom:none;}
+  .act-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  .act-text{flex:1;}
+  .act-name{font-size:0.825rem;font-weight:500;}
+  .act-detail{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+  .act-time{font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+
+  .progress-item{margin-bottom:14px;}
+  .progress-header{display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:6px;}
+  .progress-label{font-weight:500;}
+  .progress-val{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.75rem;}
+  .progress-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+
+  .map-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+  .map-cell{background:var(--surface2);border-radius:8px;padding:10px;text-align:center;}
+  .map-cell-val{font-size:1.1rem;font-weight:700;}
+  .map-cell-label{font-size:0.7rem;color:var(--muted);margin-top:2px;}
+
+  .leaderboard-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(99,179,237,0.05);}
+  .leaderboard-row:last-child{border-bottom:none;}
+  .rank{width:20px;font-size:0.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .rank.gold{color:#F6AD55;}
+  .lb-name{flex:1;font-size:0.825rem;font-weight:500;}
+  .lb-val{font-size:0.78rem;font-weight:600;font-family:'JetBrains Mono',monospace;}
+
+  @media(max-width:900px){.kpi-grid,.grid-2,.grid-3{grid-template-columns:1fr 1fr;}.nav{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><div class="logo-icon">👗</div>AI Fashion</div>
+  <nav class="nav">
+    <a href="#">Home</a>
+    <a href="#">History</a>
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Analytics</a>
+    <a href="#">Favorites</a>
+  </nav>
+  <div class="topbar-right">
+    <div class="notif"><i class="fas fa-bell"></i><div class="notif-dot"></div></div>
+    <div class="avatar">👤</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">AI Fashion Dashboard</h1>
+      <p class="page-sub">IBM ML-powered analytics · Real-time insights</p>
+    </div>
+    <div class="header-right">
+      <span class="date-chip"><i class="fas fa-calendar-alt" style="margin-right:6px;font-size:11px;"></i>May 2026</span>
+      <button class="btn"><i class="fas fa-download" style="margin-right:6px;font-size:12px;"></i>Export Report</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(99,179,237,0.1);">👥</div>
+      <div class="kpi-label">Total Users</div>
+      <div class="kpi-value" style="color:var(--accent);" id="kpi1">0</div>
+      <div class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:10px;"></i> 18% vs last month</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(159,122,234,0.1);">🔮</div>
+      <div class="kpi-label">ML Predictions</div>
+      <div class="kpi-value" style="color:var(--accent2);" id="kpi2">0</div>
+      <div class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:10px;"></i> 24% vs last month</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(104,211,145,0.1);">💬</div>
+      <div class="kpi-label">AI Chat Sessions</div>
+      <div class="kpi-value" style="color:var(--success);" id="kpi3">0</div>
+      <div class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:10px;"></i> 31% vs last month</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon" style="background:rgba(246,173,85,0.1);">🎯</div>
+      <div class="kpi-label">Model Accuracy</div>
+      <div class="kpi-value" style="color:var(--warning);" id="kpi4">0%</div>
+      <div class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:10px;"></i> 2.1% improvement</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Prediction Activity</div><div class="chart-sub">Daily predictions over last 30 days</div></div>
+        <div class="tab-row">
+          <button class="tab active">30D</button>
+          <button class="tab">7D</button>
+          <button class="tab">1D</button>
+        </div>
+      </div>
+      <div style="position:relative;height:220px;">
+        <canvas id="lineChart" role="img" aria-label="Line chart of daily prediction activity over 30 days">Daily predictions data.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Recent Activity</div><div class="chart-sub">Live event feed</div></div></div>
+      <div class="activity-list">
+        <div class="activity-item"><div class="act-icon" style="background:rgba(99,179,237,0.1);">📏</div><div class="act-text"><div class="act-name">Size Prediction</div><div class="act-detail">User #120 · Casual · Slim</div></div><div class="act-time">2m ago</div></div>
+        <div class="activity-item"><div class="act-icon" style="background:rgba(159,122,234,0.1);">💬</div><div class="act-text"><div class="act-name">Chat Session</div><div class="act-detail">Outfit recommendation</div></div><div class="act-time">5m ago</div></div>
+        <div class="activity-item"><div class="act-icon" style="background:rgba(104,211,145,0.1);">⭐</div><div class="act-text"><div class="act-name">Saved Favourite</div><div class="act-detail">Monochrome summer look</div></div><div class="act-time">11m ago</div></div>
+        <div class="activity-item"><div class="act-icon" style="background:rgba(246,173,85,0.1);">📝</div><div class="act-text"><div class="act-name">Feedback Submitted</div><div class="act-detail">Rating: 5/5 · Very accurate</div></div><div class="act-time">18m ago</div></div>
+        <div class="activity-item"><div class="act-icon" style="background:rgba(252,129,129,0.1);">🔮</div><div class="act-text"><div class="act-name">Batch Prediction</div><div class="act-detail">12 predictions · Athletic body</div></div><div class="act-time">22m ago</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Style Breakdown</div></div>
+      <div style="position:relative;height:180px;">
+        <canvas id="pieChart" role="img" aria-label="Pie chart of style distribution">Casual 68%, Formal 20%, Sporty 12%</canvas>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">
+        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;"><span style="width:9px;height:9px;border-radius:2px;background:#63B3ED;display:inline-block;"></span>Casual 68%</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;"><span style="width:9px;height:9px;border-radius:2px;background:#9F7AEA;display:inline-block;"></span>Formal 20%</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;"><span style="width:9px;height:9px;border-radius:2px;background:#68D391;display:inline-block;"></span>Sporty 12%</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Model Performance</div></div>
+      <div class="progress-item"><div class="progress-header"><span class="progress-label">Overall Accuracy</span><span class="progress-val">94.2%</span></div><div class="progress-track"><div class="progress-fill" style="width:94%;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div></div></div>
+      <div class="progress-item"><div class="progress-header"><span class="progress-label">Casual Detection</span><span class="progress-val">97%</span></div><div class="progress-track"><div class="progress-fill" style="width:97%;background:var(--success);"></div></div></div>
+      <div class="progress-item"><div class="progress-header"><span class="progress-label">Formal Detection</span><span class="progress-val">91%</span></div><div class="progress-track"><div class="progress-fill" style="width:91%;background:var(--accent2);"></div></div></div>
+      <div class="progress-item"><div class="progress-header"><span class="progress-label">Sporty Detection</span><span class="progress-val">89%</span></div><div class="progress-track"><div class="progress-fill" style="width:89%;background:var(--warning);"></div></div></div>
+      <div class="progress-item"><div class="progress-header"><span class="progress-label">Body Type Match</span><span class="progress-val">93%</span></div><div class="progress-track"><div class="progress-fill" style="width:93%;background:var(--accent3);"></div></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Top Users</div></div>
+      <div class="leaderboard-row"><div class="rank gold">01</div><div class="lb-name">Arjun Sharma</div><div class="lb-val" style="color:var(--accent);">42 pred</div></div>
+      <div class="leaderboard-row"><div class="rank gold">02</div><div class="lb-name">Priya Nair</div><div class="lb-val" style="color:var(--accent2);">38 pred</div></div>
+      <div class="leaderboard-row"><div class="rank">03</div><div class="lb-name">Rahul Patel</div><div class="lb-val">31 pred</div></div>
+      <div class="leaderboard-row"><div class="rank">04</div><div class="lb-name">Sneha Kumar</div><div class="lb-val">27 pred</div></div>
+      <div class="leaderboard-row"><div class="rank">05</div><div class="lb-name">Dev Mehta</div><div class="lb-val">24 pred</div></div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-header"><div><div class="chart-title">Body Type Distribution by Gender</div><div class="chart-sub">ML training data insights</div></div></div>
+    <div style="position:relative;height:200px;">
+      <canvas id="groupedBar" role="img" aria-label="Grouped bar chart of body type distribution by gender">Slim, Athletic, Plus body types by Male and Female.</canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function countUp(id, target, suffix='', dur=1500) {
+  const el = document.getElementById(id);
+  const step = target / (dur / 16);
+  let val = 0;
+  const t = setInterval(() => {
+    val += step;
+    if(val >= target) { val = target; clearInterval(t); }
+    el.textContent = Math.round(val) + suffix;
+  }, 16);
+}
+countUp('kpi1',120,'+');
+countUp('kpi2',350,'+');
+countUp('kpi3',500,'+');
+countUp('kpi4',94,'%');
+
+const days = Array.from({length:30},(_,i)=>i+1+'');
+const preds = Array.from({length:30},()=>Math.round(8+Math.random()*18));
+new Chart(document.getElementById('lineChart'),{
+  type:'line',
+  data:{labels:days,datasets:[{label:'Predictions',data:preds,borderColor:'#63B3ED',backgroundColor:'rgba(99,179,237,0.08)',fill:true,tension:0.4,pointRadius:0,borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#718096',font:{size:10},maxTicksLimit:8}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#718096',font:{size:10}}}}}
+});
+
+new Chart(document.getElementById('pieChart'),{
+  type:'doughnut',
+  data:{labels:['Casual','Formal','Sporty'],datasets:[{data:[68,20,12],backgroundColor:['#63B3ED','#9F7AEA','#68D391'],borderWidth:0,hoverOffset:4}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('groupedBar'),{
+  type:'bar',
+  data:{
+    labels:['Slim','Athletic','Plus','Petite','Tall'],
+    datasets:[
+      {label:'Male',data:[45,38,12,8,22],backgroundColor:'rgba(99,179,237,0.7)',borderRadius:4},
+      {label:'Female',data:[52,29,18,15,11],backgroundColor:'rgba(159,122,234,0.7)',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#718096'}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#718096'}}}}
+});
+</script>
+</body>
+</html>

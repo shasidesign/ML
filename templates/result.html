@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Result — FitAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-inner">
+    <div class="loader-ring"></div>
+    <div class="loader-orb">AI</div>
+    <h2>Analyzing your fashion profile…</h2>
+    <p>Our ML model is finding your perfect fit</p>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<!-- Content -->
+<div id="content" class="hidden">
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo">Fit<span>AI</span></a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/history">History</a></li>
+        <li><a href="/analytics-chart">Analytics</a></li>
+        <li><a href="/chatbot">AI Chatbot</a></li>
+        <li><a href="/favorites">Favorites</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="/" class="btn-ghost">← Try Again</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="result-page">
+
+    <!-- Size Result -->
+    <section class="result-hero fadeUp">
+      <div class="result-badge">✦ Your Perfect Size</div>
+      <p class="result-label">We recommend</p>
+      <div class="size-display">{{ result }}</div>
+      <p class="result-subtext">AI-powered personalized fit</p>
+    </section>
+
+    <!-- Confidence Score -->
+    <section class="confidence-section fadeUp delay-1">
+      <div class="confidence-header">
+        <h3>Confidence Score</h3>
+        <span class="confidence-value">{{ confidence }}%</span>
+      </div>
+      <p class="confidence-desc">How certain the AI is about your size prediction</p>
+      <div class="confidence-bar">
+        <div class="confidence-fill" style="width: {{ confidence }}%;"></div>
+      </div>
+    </section>
+
+    <!-- AI Insights -->
+    <section class="insights-card fadeUp delay-2">
+      <h3>✦ AI Style Insights</h3>
+      <p class="insight-text">{{ style_insight }}</p>
+    </section>
+
+    <!-- Divider -->
+    <div class="divider">
+      <div class="line"></div>
+      <span class="divider-text">Recommended Styles</span>
+      <div class="line"></div>
+    </div>
+
+    <!-- Recommendations -->
+    <section>
+      <header class="section-header">
+        <h2 class="section-title">AI Fashion Recommendations</h2>
+        <p class="section-desc">Curated looks based on your body type and style profile</p>
+      </header>
+
+      <div class="reco-grid">
+        {% for item in recommendations %}
+        <div class="reco-card fadeUp" style="animation-delay:  {{ loop.index0 * 0.1 }}s;">
+          <div class="reco-img">
+            <img src="{{ url_for('static', filename=item.image) }}" alt="Recommended fashion style: {{ item.name }}">
+          </div>
+          <div class="reco-info">
+            <div class="reco-name">{{ item.name }}</div>
+            <div class="reco-tag">AI Recommended</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>  

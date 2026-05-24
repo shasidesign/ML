@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Fashion — AI Fashion</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{--bg:#050A14;--surface:#0D1525;--surface2:#131D30;--border:rgba(99,179,237,0.12);--accent:#63B3ED;--accent2:#9F7AEA;--text:#E2E8F0;--muted:#718096;--success:#68D391;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;text-decoration:none;color:var(--text);}
+  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .nav{display:flex;gap:4px;}
+  .nav a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;transition:all 0.2s;}
+  .nav a:hover{color:var(--text);background:var(--surface2);}
+  .container{max-width:700px;margin:0 auto;padding:3rem 2rem;}
+  .page-title{font-size:1.75rem;font-weight:700;letter-spacing:-0.03em;text-align:center;margin-bottom:2rem;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .upload-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;position:relative;overflow:hidden;}
+  .upload-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);}
+  .drop-zone{border:2px dashed var(--border);border-radius:14px;padding:3rem;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:1.5rem;}
+  .drop-zone:hover{border-color:var(--accent);background:rgba(99,179,237,0.04);}
+  .drop-icon{font-size:3rem;margin-bottom:1rem;display:block;}
+  .drop-text{font-size:0.9rem;color:var(--muted);}
+  .file-input{display:none;}
+  .btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;padding:14px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;margin-top:12px;}
+  .btn:hover{opacity:0.88;}
+  .result-box{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-top:2rem;text-align:center;}
+  .result-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+  .result-val{font-size:1.3rem;font-weight:700;color:var(--accent);}
+  .uploaded-img{width:100%;max-height:300px;object-fit:cover;border-radius:10px;margin-top:16px;}
+  @media(max-width:600px){.nav{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="logo"><div class="logo-icon">👗</div>AI Fashion</a>
+  <nav class="nav">
+    <a href="/">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/history">History</a>
+    <a href="/dashboard">Dashboard</a>
+  </nav>
+</div>
+<div class="container">
+  <h1 class="page-title">AI Fashion Image Upload</h1>
+  <div class="upload-card">
+    <form method="POST" enctype="multipart/form-data">
+      <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+        <span class="drop-icon">📸</span>
+        <div class="drop-text">Click to upload a fashion image<br><small style="color:var(--muted);font-size:0.75rem;">Supports JPG, PNG, WEBP</small></div>
+        <input type="file" name="image" id="fileInput" class="file-input" accept="image/*" required onchange="showPreview(this)">
+      </div>
+      <div id="preview" style="display:none;margin-bottom:12px;"><img id="previewImg" class="uploaded-img" src="" alt="Preview"></div>
+      <button type="submit" class="btn"><i class="fas fa-magic" style="margin-right:8px;"></i>Analyze Fashion</button>
+    </form>
+    {% if prediction %}
+    <div class="result-box">
+      <div class="result-label">AI Prediction</div>
+      <div class="result-val">{{ prediction }}</div>
+      {% if image_path %}
+      <img src="{{ url_for('static', filename=image_path.replace('static/', '')) }}" class="uploaded-img" alt="Uploaded image">
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+<script>
+function showPreview(input) {
+  if(input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('preview').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
+</body>
+</html>

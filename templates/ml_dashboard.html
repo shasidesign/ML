@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>ML Dashboard</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+
+AI Fashion
+
+</div>
+
+<ul>
+
+<li><a href="/">Home</a></li>
+
+<li><a href="/dashboard">Dashboard</a></li>
+
+</ul>
+
+</nav>
+
+<div class="dashboard-container">
+
+<h1>Machine Learning Dashboard</h1>
+
+<div class="chart-card">
+
+<h2>Model Accuracy Comparison</h2>
+
+<img src="{{ url_for('static',
+filename='model_comparison.png') }}">
+
+</div>
+
+<div class="chart-card">
+
+<h2>Confusion Matrix</h2>
+
+<img src="{{ url_for('static',
+filename='model_comparison.png') }}">
+
+</div>
+
+</div>
+
+</body>
+</html>

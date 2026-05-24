@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>AI Size Prediction</title>
+
+    <link rel="stylesheet"
+
+    href="{{ url_for(
+        'static',
+        filename='style.css'
+    ) }}">
+
+</head>
+
+<body>
+
+<div class="predict-container">
+
+    <h1>
+
+        AI Clothing Size Prediction
+
+    </h1>
+
+    <form method="POST">
+
+        <input type="number"
+
+        name="height"
+
+        placeholder="Height (cm)"
+
+        required>
+
+        <input type="number"
+
+        name="weight"
+
+        placeholder="Weight (kg)"
+
+        required>
+
+        <input type="number"
+
+        name="age"
+
+        placeholder="Age"
+
+        required>
+
+        <select name="gender">
+
+            <option value="0">
+
+                Male
+
+            </option>
+
+            <option value="1">
+
+                Female
+
+            </option>
+
+        </select>
+
+        <button type="submit">
+
+            Predict Size
+
+        </button>
+
+    </form>
+
+    {% if prediction %}
+
+    <div class="prediction-box">
+
+        Predicted Size:
+        {{ prediction }}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

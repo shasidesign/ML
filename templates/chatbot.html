@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Fashion Assistant — Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #050A14;
+    --surface: #0D1525;
+    --surface2: #131D30;
+    --border: rgba(99,179,237,0.12);
+    --accent: #63B3ED;
+    --accent2: #9F7AEA;
+    --accent3: #FC8181;
+    --text: #E2E8F0;
+    --muted: #718096;
+    --success: #68D391;
+  }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden; }
+  .topbar {
+    background:var(--surface);border-bottom:1px solid var(--border);
+    padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;flex-shrink:0;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;letter-spacing:-0.02em;}
+  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .nav{display:flex;gap:4px;}
+  .nav a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;transition:all 0.2s;}
+  .nav a:hover{color:var(--text);background:var(--surface2);}
+  .nav a.active{color:var(--accent);background:rgba(99,179,237,0.08);}
+  .status-dot{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--success);}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  .main { display:flex;flex:1;overflow:hidden; }
+
+  .sidebar {
+    width:280px;background:var(--surface);border-right:1px solid var(--border);
+    display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
+  }
+  .sidebar-header{padding:1.25rem;border-bottom:1px solid var(--border);}
+  .sidebar-title{font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;}
+  .topic-btn{
+    display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
+    background:none;border:1px solid transparent;border-radius:10px;
+    color:var(--muted);font-family:inherit;font-size:0.8rem;font-weight:500;
+    cursor:pointer;text-align:left;transition:all 0.2s;margin-bottom:4px;
+  }
+  .topic-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border);}
+  .topic-btn.active{background:rgba(99,179,237,0.08);color:var(--accent);border-color:rgba(99,179,237,0.2);}
+  .topic-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  .sidebar-history{flex:1;overflow-y:auto;padding:1rem;}
+  .hist-label{font-size:0.7rem;color:var(--muted);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;}
+  .hist-item{
+    padding:8px 10px;border-radius:8px;cursor:pointer;font-size:0.78rem;
+    color:var(--muted);margin-bottom:2px;transition:all 0.15s;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .hist-item:hover{background:var(--surface2);color:var(--text);}
+  .sidebar-footer{padding:1rem;border-top:1px solid var(--border);}
+  .model-info{display:flex;align-items:center;gap:10px;}
+  .model-badge{background:rgba(159,122,234,0.1);color:var(--accent2);border:1px solid rgba(159,122,234,0.2);padding:4px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;}
+
+  .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .chat-header{
+    padding:1rem 1.5rem;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  }
+  .chat-avatar{
+    width:40px;height:40px;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:12px;
+  }
+  .chat-title{font-weight:600;font-size:0.95rem;}
+  .chat-sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+  .chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{
+    background:var(--surface2);border:1px solid var(--border);border-radius:20px;
+    padding:4px 12px;font-size:0.75rem;color:var(--muted);cursor:pointer;transition:all 0.2s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);}
+
+  .messages{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:16px;}
+  .messages::-webkit-scrollbar{width:4px;}
+  .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+  .msg{display:flex;gap:12px;max-width:75%;animation:slideIn 0.25s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .msg.user{align-self:flex-end;flex-direction:row-reverse;}
+  .msg-avatar{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .msg-avatar.ai{background:linear-gradient(135deg,var(--accent),var(--accent2));}
+  .msg-avatar.user{background:var(--surface2);border:1px solid var(--border);}
+  .msg-content{display:flex;flex-direction:column;gap:4px;}
+  .msg-sender{font-size:0.7rem;font-weight:600;color:var(--muted);letter-spacing:0.04em;}
+  .msg.user .msg-sender{text-align:right;}
+  .msg-bubble{
+    padding:12px 16px;border-radius:14px;font-size:0.875rem;line-height:1.6;
+  }
+  .msg.ai .msg-bubble{background:var(--surface2);border:1px solid var(--border);border-top-left-radius:4px;}
+  .msg.user .msg-bubble{background:linear-gradient(135deg,rgba(99,179,237,0.2),rgba(159,122,234,0.2));border:1px solid rgba(99,179,237,0.2);border-top-right-radius:4px;}
+  .msg-time{font-size:0.68rem;color:var(--muted);}
+  .msg.user .msg-time{text-align:right;}
+
+  .outfit-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:14px;margin-top:8px;
+  }
+  .outfit-card-title{font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;}
+  .outfit-items{display:flex;gap:8px;flex-wrap:wrap;}
+  .outfit-item{
+    display:flex;align-items:center;gap:6px;
+    background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+    padding:6px 10px;font-size:0.78rem;
+  }
+  .outfit-dot{width:8px;height:8px;border-radius:50%;}
+  .typing{display:flex;gap:4px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;width:fit-content;}
+  .typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:bounce 1.2s ease infinite;}
+  .typing-dot:nth-child(2){animation-delay:0.2s;}
+  .typing-dot:nth-child(3){animation-delay:0.4s;}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+  .input-area{
+    padding:1rem 1.5rem;border-top:1px solid var(--border);flex-shrink:0;
+    background:var(--surface);
+  }
+  .input-row{display:flex;gap:10px;align-items:flex-end;}
+  .input-box{
+    flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:14px;
+    padding:12px 16px;color:var(--text);font-family:inherit;font-size:0.875rem;
+    outline:none;resize:none;min-height:48px;max-height:120px;line-height:1.5;transition:border 0.2s;
+  }
+  .input-box:focus{border-color:var(--accent);}
+  .input-box::placeholder{color:var(--muted);}
+  .send-btn{
+    width:48px;height:48px;border-radius:14px;border:none;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+    transition:opacity 0.2s;flex-shrink:0;
+  }
+  .send-btn:hover{opacity:0.85;}
+  .input-tools{display:flex;gap:6px;margin-top:8px;align-items:center;}
+  .tool-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px 8px;border-radius:6px;font-family:inherit;font-size:0.78rem;display:flex;align-items:center;gap:5px;transition:color 0.2s;}
+  .tool-btn:hover{color:var(--accent);}
+  .char-count{margin-left:auto;font-size:0.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+
+  @media (max-width:768px){.sidebar{display:none;}.nav{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><div class="logo-icon">👗</div>AI Fashion</div>
+  <nav class="nav">
+    <a href="#">Home</a>
+    <a href="#">History</a>
+    <a href="#">Analytics</a>
+    <a href="#" class="active">AI Chat</a>
+    <a href="#">Favorites</a>
+  </nav>
+  <div class="status-dot"><div class="dot"></div>Model Active</div>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Quick Topics</div>
+      <button class="topic-btn active" onclick="setTopic(this,'outfit')"><div class="topic-icon" style="background:rgba(99,179,237,0.1);">👗</div>Outfit Recommendations</button>
+      <button class="topic-btn" onclick="setTopic(this,'size')"><div class="topic-icon" style="background:rgba(159,122,234,0.1);">📏</div>Size Prediction</button>
+      <button class="topic-btn" onclick="setTopic(this,'trend')"><div class="topic-icon" style="background:rgba(104,211,145,0.1);">📈</div>Fashion Trends</button>
+      <button class="topic-btn" onclick="setTopic(this,'colour')"><div class="topic-icon" style="background:rgba(246,173,85,0.1);">🎨</div>Color Matching</button>
+      <button class="topic-btn" onclick="setTopic(this,'occasion')"><div class="topic-icon" style="background:rgba(252,129,129,0.1);">✨</div>Occasion Styling</button>
+      <button class="topic-btn" onclick="setTopic(this,'body')"><div class="topic-icon" style="background:rgba(99,179,237,0.1);">🧍</div>Body Type Guide</button>
+    </div>
+    <div class="sidebar-history">
+      <div class="hist-label">Recent Chats</div>
+      <div class="hist-item">What to wear for a job interview?</div>
+      <div class="hist-item">Casual summer outfit ideas</div>
+      <div class="hist-item">Size prediction for slim body</div>
+      <div class="hist-item">Monochrome styling tips</div>
+      <div class="hist-item">Winter layering guide</div>
+      <div class="hist-item">Athletic wear recommendations</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="model-info">
+        <span style="font-size:0.78rem;color:var(--muted);">Powered by</span>
+        <span class="model-badge">IBM Watson ML</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="chat-area">
+    <div class="chat-header">
+      <div style="display:flex;align-items:center;">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="chat-title">FitAI Fashion Assistant</div>
+          <div class="chat-sub">Powered by ML · Responds instantly</div>
+        </div>
+      </div>
+      <div class="chip-row">
+        <span class="chip" onclick="quickMsg('What outfit suits a slim body type?')">Quick style tip</span>
+        <span class="chip" onclick="quickMsg('Predict my size: Height 170cm, Weight 65kg, Athletic build')">Size predict</span>
+        <span class="chip" onclick="quickMsg('What are the top fashion trends this season?')">Trends</span>
+      </div>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="msg ai">
+        <div class="msg-avatar ai">🤖</div>
+        <div class="msg-content">
+          <span class="msg-sender">FitAI</span>
+          <div class="msg-bubble">
+            👋 Hello! I'm your AI Fashion Assistant, powered by IBM's machine learning model.<br><br>
+            I can help you with:<br>
+            • <strong>Size predictions</strong> based on your body measurements<br>
+            • <strong>Outfit recommendations</strong> for any occasion<br>
+            • <strong>Fashion trend insights</strong> and colour matching<br><br>
+            How can I style you today? 🌟
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🔥 Trending Now</div>
+            <div class="outfit-items">
+              <div class="outfit-item"><div class="outfit-dot" style="background:#63B3ED"></div>Oversized Blazers</div>
+              <div class="outfit-item"><div class="outfit-dot" style="background:#9F7AEA"></div>Monochrome Sets</div>
+              <div class="outfit-item"><div class="outfit-dot" style="background:#68D391"></div>Cargo Trousers</div>
+              <div class="outfit-item"><div class="outfit-dot" style="background:#F6AD55"></div>Earth Tones</div>
+            </div>
+          </div>
+          <span class="msg-time">Just now</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <textarea class="input-box" id="inputBox" placeholder="Ask about fashion, sizing, outfit ideas…" rows="1" oninput="updateCount(this)" onkeydown="handleKey(event)"></textarea>
+        <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+      <div class="input-tools">
+        <button class="tool-btn"><i class="fas fa-image"></i> Photo</button>
+        <button class="tool-btn"><i class="fas fa-ruler"></i> Measurements</button>
+        <button class="tool-btn"><i class="fas fa-magic"></i> Surprise me</button>
+        <span class="char-count" id="charCount">0 / 500</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const responses = {
+  outfit: [{
+    text:"For a <strong>slim body type</strong>, I recommend outfits that add visual volume and structure! 💫",
+    outfit:{title:"✨ Recommended Outfit Combos",items:[
+      {color:'#63B3ED',label:'Structured Blazer'},
+      {color:'#9F7AEA',label:'Wide-leg Trousers'},
+      {color:'#68D391',label:'Chunky Sneakers'},
+      {color:'#F6AD55',label:'Layered Tee'}
+    ]}
+  }],
+  size:[{text:"Based on your measurements, here's your ML-predicted size profile: 📊<br><br>• <strong>Top:</strong> M (Size 38–40)<br>• <strong>Bottom:</strong> M (Waist 32\")<br>• <strong>Style Match:</strong> Casual / Smart-Casual<br>• <strong>Confidence:</strong> 92%"}],
+  trend:[{text:"Here are the <strong>top fashion trends</strong> this season 🔥<br><br>1. <strong>Quiet Luxury</strong> — Minimalist, muted tones<br>2. <strong>Athleisure 2.0</strong> — Sport meets fashion<br>3. <strong>Denim-on-Denim</strong> — Bold Canadian tuxedo<br>4. <strong>Oversized Everything</strong> — Comfort & style"}],
+  default:[
+    {text:"Great question! Based on our ML model's analysis of 350+ user profiles, I recommend focusing on outfits that complement your body type with balanced proportions. Would you like specific recommendations? 🎯"},
+    {text:"I've analysed your query with our IBM fashion ML model. The best approach for your style profile is layering with neutral base colours, then adding accent pieces. Try combining navy + beige + white for a timeless look! ✨"},
+    {text:"Our model predicts a 94% match with <strong>smart-casual</strong> as your primary style. This means you can effortlessly blend tailored pieces with relaxed fits for a polished yet comfortable look. 💼"}
+  ]
+};
+
+let defaultIdx = 0;
+
+function addMessage(text, isUser, outfitData) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (isUser ? 'user' : 'ai');
+  const now = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  let extra = '';
+  if(outfitData) {
+    extra = `<div class="outfit-card"><div class="outfit-card-title">${outfitData.title}</div><div class="outfit-items">${outfitData.items.map(i=>`<div class="outfit-item"><div class="outfit-dot" style="background:${i.color}"></div>${i.label}</div>`).join('')}</div></div>`;
+  }
+  div.innerHTML = `
+    <div class="msg-avatar ${isUser?'user':'ai'}">${isUser?'🧑':'🤖'}</div>
+    <div class="msg-content">
+      <span class="msg-sender">${isUser?'You':'FitAI'}</span>
+      <div class="msg-bubble">${text}</div>
+      ${extra}
+      <span class="msg-time">${now}</span>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar ai">🤖</div><div class="msg-content"><span class="msg-sender">FitAI</span><div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if(t) t.remove();
+}
+
+function getResponse(msg) {
+  const m = msg.toLowerCase();
+  if(m.includes('outfit') || m.includes('wear') || m.includes('slim')) return responses.outfit[0];
+  if(m.includes('size') || m.includes('predict') || m.includes('measurement')) return responses.size[0];
+  if(m.includes('trend') || m.includes('season') || m.includes('popular')) return responses.trend[0];
+  const r = responses.default[defaultIdx % responses.default.length];
+  defaultIdx++;
+  return r;
+}
+
+function sendMessage() {
+  const box = document.getElementById('inputBox');
+  const msg = box.value.trim();
+  if(!msg) return;
+  addMessage(msg, true);
+  box.value = '';
+  document.getElementById('charCount').textContent = '0 / 500';
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const r = getResponse(msg);
+    addMessage(r.text, false, r.outfit);
+  }, 900 + Math.random()*600);
+}
+
+function quickMsg(msg) {
+  document.getElementById('inputBox').value = msg;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function updateCount(el) {
+  document.getElementById('charCount').textContent = el.value.length + ' / 500';
+}
+
+function setTopic(btn, topic) {
+  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const tips = {
+    outfit:'What outfit suits a slim body type?',
+    size:'Predict my size: Height 170cm, Weight 65kg',
+    trend:'What are the top fashion trends this season?',
+    colour:'How do I match colours for my skin tone?',
+    occasion:'What should I wear to a formal dinner?',
+    body:'What outfits suit an athletic body type?'
+  };
+  if(tips[topic]) quickMsg(tips[topic]);
+}
+</script>
+</body>
+</html>

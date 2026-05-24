@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Fashion — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #050A14;
+    --surface: #0D1525;
+    --surface2: #131D30;
+    --border: rgba(99,179,237,0.12);
+    --accent: #63B3ED;
+    --accent2: #9F7AEA;
+    --accent3: #FC8181;
+    --text: #E2E8F0;
+    --muted: #718096;
+    --success: #68D391;
+    --warning: #F6AD55;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; text-decoration: none; color: var(--text); }
+  .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav { display: flex; gap: 4px; }
+  .nav a { color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; }
+  .nav a:hover { color: var(--text); background: var(--surface2); }
+  .nav a.active { color: var(--accent); background: rgba(99,179,237,0.08); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .badge { background: rgba(99,179,237,0.1); color: var(--accent); border: 1px solid rgba(99,179,237,0.2); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; }
+  .hero { max-width: 1200px; margin: 0 auto; padding: 5rem 2rem 3rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .hero-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: rgba(99,179,237,0.08); border: 1px solid rgba(99,179,237,0.2); padding: 5px 14px; border-radius: 20px; margin-bottom: 1.75rem; }
+  .hero-title { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 1.25rem; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-sub { font-size: 1rem; font-weight: 400; color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 4rem; }
+  .btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; border-radius: 10px; padding: 10px 22px; font-family: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: opacity 0.2s, transform 0.2s; }
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 10px; padding: 10px 22px; font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; max-width: 1200px; margin: 0 auto 3rem; padding: 0 2rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; position: relative; overflow: hidden; text-align: center; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .stat-card.blue::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .stat-card.purple::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .stat-card.green::before { background: linear-gradient(90deg, var(--success), transparent); }
+  .stat-card.orange::before { background: linear-gradient(90deg, var(--warning), transparent); }
+  .stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .stat-value { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; }
+  .stat-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+  .section { max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; }
+  .section-header { margin-bottom: 1.5rem; }
+  .section-title { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; background: linear-gradient(135deg, var(--text), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+  .section-sub { font-size: 0.875rem; color: var(--muted); }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .feat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; transition: border-color 0.2s, transform 0.2s; text-decoration: none; color: inherit; display: block; }
+  .feat-card:hover { border-color: rgba(99,179,237,0.3); transform: translateY(-2px); }
+  .feat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 1rem; }
+  .feat-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .feat-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+  .feat-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; color: var(--accent); margin-top: 1rem; text-decoration: none; }
+  .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; }
+  .step-num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600; color: var(--accent); background: rgba(99,179,237,0.08); border: 1px solid rgba(99,179,237,0.2); padding: 3px 9px; border-radius: 6px; display: inline-block; margin-bottom: 12px; }
+  .step-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+  .step-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+  .cta-banner { max-width: 1200px; margin: 0 auto 4rem; padding: 0 2rem; }
+  .cta-inner { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; position: relative; overflow: hidden; }
+  .cta-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2), transparent); }
+  .cta-title { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .cta-sub { font-size: 0.875rem; color: var(--muted); }
+  @media (max-width: 900px) { .features-grid { grid-template-columns: 1fr 1fr; } .steps-grid { grid-template-columns: 1fr 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } .nav { display: none; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="logo"><div class="logo-icon">👗</div>AI Fashion</a>
+  <nav class="nav">
+    <a href="/" class="active">Home</a>
+    <a href="/history">History</a>
+    <a href="/analytics-chart">Analytics</a>
+    <a href="/favorites">Favorites</a>
+    <a href="/feedback">Feedback</a>
+  </nav>
+  <div class="topbar-right">
+    {% if session.get('user') %}
+      <span class="badge">{{ session['user'] }}</span>
+      <a href="/logout" style="color:var(--muted);font-size:0.8rem;text-decoration:none;">Logout</a>
+    {% else %}
+      <a href="/login" class="badge" style="text-decoration:none;">Sign In</a>
+    {% endif %}
+    <span class="badge" style="background:rgba(104,211,145,0.08);color:var(--success);border-color:rgba(104,211,145,0.2);">● Live</span>
+  </div>
+</div>
+
+<div class="hero">
+  <span class="hero-eyebrow"><i class="fas fa-microchip" style="margin-right:6px;"></i>IBM ML Powered · AI Fashion Platform</span>
+  <h1 class="hero-title">Dress smarter with<br>AI-powered predictions</h1>
+  <p class="hero-sub">Get personalised size predictions, outfit recommendations, and style analytics tailored to your body type and lifestyle.</p>
+  <div class="hero-btns">
+    {% if session.get('user') %}
+      <a href="/predict" class="btn"><i class="fas fa-magic"></i> Get My Prediction</a>
+      <a href="/dashboard" class="btn-outline"><i class="fas fa-th-large"></i> Dashboard</a>
+    {% else %}
+      <a href="/login" class="btn"><i class="fas fa-magic"></i> Get Started</a>
+      <a href="/login" class="btn-outline"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card blue"><div class="stat-label">Total Users</div><div class="stat-value" style="color:var(--accent)">120+</div><div class="stat-sub">↑ 18% this month</div></div>
+  <div class="stat-card purple"><div class="stat-label">ML Predictions</div><div class="stat-value" style="color:var(--accent2)">350+</div><div class="stat-sub">↑ 24% this month</div></div>
+  <div class="stat-card green"><div class="stat-label">Model Accuracy</div><div class="stat-value" style="color:var(--success)">94.2%</div><div class="stat-sub">Based on feedback</div></div>
+  <div class="stat-card orange"><div class="stat-label">AI Chat Sessions</div><div class="stat-value" style="color:var(--warning)">500+</div><div class="stat-sub">↑ 31% this month</div></div>
+</div>
+
+<div class="section">
+  <div class="section-header"><div class="section-title">Everything you need</div><div class="section-sub">All features powered by IBM ML</div></div>
+  <div class="features-grid">
+    <a href="/predict" class="feat-card"><div class="feat-icon" style="background:rgba(99,179,237,0.1);">📏</div><div class="feat-title">Size Prediction</div><p class="feat-desc">Enter your height, weight, age, gender and body type. Our ML model returns your perfect clothing size instantly.</p><span class="feat-link">Try now <i class="fas fa-arrow-right" style="font-size:10px;"></i></span></a>
+    <a href="/chatbot" class="feat-card"><div class="feat-icon" style="background:rgba(159,122,234,0.1);">🤖</div><div class="feat-title">AI Fashion Chat</div><p class="feat-desc">Chat with our AI assistant for outfit ideas, colour matching tips, and fashion advice tailored to your style.</p><span class="feat-link">Chat now <i class="fas fa-arrow-right" style="font-size:10px;"></i></span></a>
+    <a href="/history" class="feat-card"><div class="feat-icon" style="background:rgba(104,211,145,0.1);">📊</div><div class="feat-title">Prediction History</div><p class="feat-desc">Track all your past predictions, view style breakdowns, and analyse how your recommendations change over time.</p><span class="feat-link">View history <i class="fas fa-arrow-right" style="font-size:10px;"></i></span></a>
+    <a href="/favorites" class="feat-card"><div class="feat-icon" style="background:rgba(246,173,85,0.1);">⭐</div><div class="feat-title">Saved Favourites</div><p class="feat-desc">Save your favourite outfit recommendations and build a personal lookbook you can access any time.</p><span class="feat-link">View favourites <i class="fas fa-arrow-right" style="font-size:10px;"></i></span></a>
+    <a href="/analytics-chart" class="feat-card"><div class="feat-icon" style="background:rgba(252,129,129,0.1);">📈</div><div class="feat-title">Style Analytics</div><p class="feat-desc">Visual charts and insights on prediction trends, body type distributions, and style preferences across all users.</p><span class="feat-link">See analytics <i class="fas fa-arrow-right" style="font-size:10px;"></i></span></a>
+    <a href="/feedback" class="feat-card"><div class="feat-icon" style="background:rgba(99,179,237,0.1);">💬</div><div class="feat-title">Feedback</div><p class="feat-desc">Rate the ML model's accuracy and share your experience to help improve predictions for everyone.</p><span class="feat-link">Give feedback <i class="fas fa-arrow-right" style="font-size:10px;"></i></span></a>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><div class="section-title">How it works</div><div class="section-sub">Get your prediction in 4 simple steps</div></div>
+  <div class="steps-grid">
+    <div class="step-card"><span class="step-num">01</span><div class="step-title">Create Account</div><p class="step-desc">Sign up with your name and password. Free to use, no credit card needed.</p></div>
+    <div class="step-card"><span class="step-num">02</span><div class="step-title">Enter Measurements</div><p class="step-desc">Input your height, weight, age, gender and body type into the prediction form.</p></div>
+    <div class="step-card"><span class="step-num">03</span><div class="step-title">Get AI Prediction</div><p class="step-desc">Our IBM ML model analyses your profile and recommends your perfect size and style.</p></div>
+    <div class="step-card"><span class="step-num">04</span><div class="step-title">Explore &amp; Save</div><p class="step-desc">Browse outfit recommendations, chat with AI, and save your favourite looks.</p></div>
+  </div>
+</div>
+
+<div class="cta-banner">
+  <div class="cta-inner">
+    <div><div class="cta-title">Ready to find your perfect fit?</div><div class="cta-sub">Join 120+ users already using AI Fashion to dress smarter.</div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="/predict" class="btn"><i class="fas fa-magic"></i> Start Predicting</a>
+      <a href="/signup" class="btn-outline"><i class="fas fa-user-plus"></i> Create Account</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

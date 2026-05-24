@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Fashion Styles</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+
+AI Fashion
+
+</div>
+
+<ul>
+
+<li><a href="/">Home</a></li>
+
+<li><a href="/dashboard">Dashboard</a></li>
+
+<li><a href="/chatbot">AI Stylist</a></li>
+
+</ul>
+
+</nav>
+
+<div class="container">
+
+<h1>
+
+{{ style_name.capitalize() }} Styles
+
+</h1>
+
+<div class="cards">
+
+{% for item in styles %}
+
+<div class="card">
+
+<img src="{{ url_for('static',
+filename='images/' + item['image']) }}">
+
+<h4>{{ item['name'] }}</h4>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</body>
+</html>

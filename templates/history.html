@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction History — AI Fashion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #050A14;
+    --surface: #0D1525;
+    --surface2: #131D30;
+    --border: rgba(99,179,237,0.12);
+    --accent: #63B3ED;
+    --accent2: #9F7AEA;
+    --accent3: #FC8181;
+    --text: #E2E8F0;
+    --muted: #718096;
+    --success: #68D391;
+    --warning: #F6AD55;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+  }
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .nav { display: flex; gap: 4px; }
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .nav a:hover { color: var(--text); background: var(--surface2); }
+  .nav a.active { color: var(--accent); background: rgba(99,179,237,0.08); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .badge {
+    background: rgba(99,179,237,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(99,179,237,0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  .page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--text), var(--accent)); 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .page-subtitle { color: var(--muted); font-size: 0.875rem; margin-top: 4px; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .stat-card.blue::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .stat-card.purple::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .stat-card.red::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+  .stat-card.green::before { background: linear-gradient(90deg, var(--success), transparent); }
+  .stat-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .stat-value { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.03em; }
+  .stat-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px 8px 38px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .search-wrap { position: relative; flex: 1; min-width: 220px; }
+  .search-icon {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.875rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    padding: 14px 18px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { color: var(--accent); }
+  th i { margin-left: 4px; font-size: 10px; }
+  tbody tr {
+    border-bottom: 1px solid rgba(99,179,237,0.05);
+    transition: background 0.15s;
+    animation: fadeIn 0.3s ease forwards;
+    opacity: 0;
+  }
+  tbody tr:hover { background: rgba(99,179,237,0.04); }
+  tbody tr:last-child { border-bottom: none; }
+  @keyframes fadeIn { to { opacity: 1; } }
+  td {
+    padding: 14px 18px;
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+  .id-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .size-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .size-casual { background: rgba(99,179,237,0.1); color: var(--accent); border: 1px solid rgba(99,179,237,0.2); }
+  .size-formal { background: rgba(159,122,234,0.1); color: var(--accent2); border: 1px solid rgba(159,122,234,0.2); }
+  .size-sporty { background: rgba(104,211,145,0.1); color: var(--success); border: 1px solid rgba(104,211,145,0.2); }
+  .body-type-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    background: rgba(246,173,85,0.08);
+    color: var(--warning);
+  }
+  .gender-m { color: var(--accent); }
+  .gender-f { color: var(--accent2); }
+  .height-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bar-track {
+    width: 48px; height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-top: 1px solid var(--border);
+  }
+  .page-info { font-size: 0.8rem; color: var(--muted); }
+  .page-buttons { display: flex; gap: 6px; }
+  .page-btn {
+    width: 32px; height: 32px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .page-btn:hover, .page-btn.active { border-color: var(--accent); color: var(--accent); }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .chart-title { font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; }
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  canvas { max-height: 180px; }
+  .legend-items { flex: 1; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; margin-bottom: 8px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-label { color: var(--muted); flex: 1; }
+  .legend-val { font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+  .row-num { font-size: 0.7rem; color: var(--muted); }
+
+  .action-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 4px 10px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .action-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  @media (max-width: 768px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-row { grid-template-columns: 1fr; }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">👗</div>
+    AI Fashion
+  </div>
+  <nav class="nav">
+    <a href="#">Home</a>
+    <a href="#" class="active">History</a>
+    <a href="#">Analytics</a>
+    <a href="#">Favorites</a>
+    <a href="#">Feedback</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="badge">ML Model v2.1</span>
+    <span class="badge" style="background:rgba(104,211,145,0.08);color:var(--success);border-color:rgba(104,211,145,0.2);">● Live</span>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Prediction History</h1>
+      <p class="page-subtitle">All ML model size predictions · Sorted by latest</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-outline"><i class="fas fa-download" style="margin-right:6px;font-size:12px;"></i>Export CSV</button>
+      <button class="btn"><i class="fas fa-plus" style="margin-right:6px;font-size:12px;"></i>New Prediction</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card blue">
+      <div class="stat-label">Total Predictions</div>
+      <div class="stat-value" style="color:var(--accent)">350+</div>
+      <div class="stat-sub">↑ 12% this week</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">Accuracy Rate</div>
+      <div class="stat-value" style="color:var(--accent2)">94.2%</div>
+      <div class="stat-sub">Based on feedback</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Top Style</div>
+      <div class="stat-value" style="color:var(--success);font-size:1.3rem">Casual</div>
+      <div class="stat-sub">68% of predictions</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Avg. Confidence</div>
+      <div class="stat-value" style="color:var(--accent3)">87%</div>
+      <div class="stat-sub">Model confidence score</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-title">Style Distribution</div>
+      <div class="donut-wrap">
+        <div style="width:140px;height:140px;flex-shrink:0;position:relative;">
+          <canvas id="donutChart" role="img" aria-label="Style distribution pie chart">Casual 68%, Formal 20%, Sporty 12%</canvas>
+        </div>
+        <div class="legend-items">
+          <div class="legend-item"><div class="legend-dot" style="background:#63B3ED"></div><span class="legend-label">Casual</span><span class="legend-val">68%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#9F7AEA"></div><span class="legend-label">Formal</span><span class="legend-val">20%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#68D391"></div><span class="legend-label">Sporty</span><span class="legend-val">12%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Weekly Prediction Volume</div>
+      <div style="position:relative;height:140px;">
+        <canvas id="barChart" role="img" aria-label="Weekly prediction volume bar chart">Mon 38, Tue 52, Wed 45, Thu 61, Fri 58, Sat 42, Sun 34.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-box" placeholder="Search by ID, body type, style…" id="searchInput" oninput="filterTable()">
+    </div>
+    <select class="filter-select" onchange="filterTable()" id="genderFilter">
+      <option value="">All Genders</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <select class="filter-select" onchange="filterTable()" id="styleFilter">
+      <option value="">All Styles</option>
+      <option value="Casual">Casual</option>
+      <option value="Formal">Formal</option>
+      <option value="Sporty">Sporty</option>
+    </select>
+    <select class="filter-select" onchange="filterTable()" id="bodyFilter">
+      <option value="">All Body Types</option>
+      <option value="Slim">Slim</option>
+      <option value="Athletic">Athletic</option>
+      <option value="Plus">Plus</option>
+    </select>
+    <button class="btn-outline" onclick="clearFilters()"><i class="fas fa-times" style="margin-right:6px;font-size:11px;"></i>Clear</button>
+  </div>
+
+  <div class="table-card">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable('id')">ID <i class="fas fa-sort"></i></th>
+          <th onclick="sortTable('height')">Height (cm) <i class="fas fa-sort"></i></th>
+          <th onclick="sortTable('weight')">Weight (kg) <i class="fas fa-sort"></i></th>
+          <th onclick="sortTable('age')">Age <i class="fas fa-sort"></i></th>
+          <th onclick="sortTable('gender')">Gender <i class="fas fa-sort"></i></th>
+          <th onclick="sortTable('body')">Body Type <i class="fas fa-sort"></i></th>
+          <th onclick="sortTable('style')">Predicted Style <i class="fas fa-sort"></i></th>
+          <th>Confidence</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="pagination">
+      <span class="page-info" id="pageInfo">Showing 1–10 of 20 records</span>
+      <div class="page-buttons">
+        <button class="page-btn" onclick="changePage(-1)"><i class="fas fa-chevron-left" style="font-size:11px;"></i></button>
+        <button class="page-btn active" id="pg1" onclick="goPage(1)">1</button>
+        <button class="page-btn" id="pg2" onclick="goPage(2)">2</button>
+        <button class="page-btn" onclick="changePage(1)"><i class="fas fa-chevron-right" style="font-size:11px;"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const allData = [
+  {id:1,height:155,weight:24,age:15,gender:'Male',body:'Slim',style:'Casual',conf:91},
+  {id:2,height:155,weight:25,age:15,gender:'Male',body:'Slim',style:'Casual',conf:88},
+  {id:3,height:155,weight:25,age:15,gender:'Male',body:'Slim',style:'Casual',conf:93},
+  {id:4,height:165,weight:25,age:14,gender:'Male',body:'Slim',style:'Casual',conf:87},
+  {id:5,height:155,weight:24,age:13,gender:'Male',body:'Slim',style:'Casual',conf:85},
+  {id:6,height:133,weight:24,age:12,gender:'Male',body:'Slim',style:'Casual',conf:79},
+  {id:7,height:155,weight:25,age:15,gender:'Male',body:'Slim',style:'Casual',conf:94},
+  {id:8,height:172,weight:68,age:28,gender:'Female',body:'Athletic',style:'Sporty',conf:96},
+  {id:9,height:168,weight:62,age:24,gender:'Female',body:'Slim',style:'Formal',conf:89},
+  {id:10,height:180,weight:80,age:32,gender:'Male',body:'Athletic',style:'Sporty',conf:92},
+  {id:11,height:160,weight:58,age:20,gender:'Female',body:'Slim',style:'Casual',conf:90},
+  {id:12,height:175,weight:72,age:35,gender:'Male',body:'Athletic',style:'Formal',conf:86},
+  {id:13,height:162,weight:65,age:27,gender:'Female',body:'Plus',style:'Casual',conf:83},
+  {id:14,height:178,weight:76,age:30,gender:'Male',body:'Athletic',style:'Sporty',conf:95},
+  {id:15,height:165,weight:55,age:22,gender:'Female',body:'Slim',style:'Formal',conf:91},
+  {id:16,height:170,weight:70,age:40,gender:'Male',body:'Athletic',style:'Casual',conf:88},
+  {id:17,height:158,weight:60,age:19,gender:'Female',body:'Slim',style:'Casual',conf:87},
+  {id:18,height:183,weight:85,age:33,gender:'Male',body:'Athletic',style:'Formal',conf:93},
+  {id:19,height:163,weight:63,age:25,gender:'Female',body:'Athletic',style:'Sporty',conf:90},
+  {id:20,height:169,weight:67,age:29,gender:'Male',body:'Slim',style:'Casual',conf:84},
+];
+
+let currentPage = 1;
+const perPage = 10;
+let filtered = [...allData];
+let sortKey = '';
+let sortDir = 1;
+
+function getStyleClass(s) {
+  if(s==='Formal') return 'size-formal';
+  if(s==='Sporty') return 'size-sporty';
+  return 'size-casual';
+}
+function getStyleIcon(s) {
+  if(s==='Formal') return '🎩';
+  if(s==='Sporty') return '⚡';
+  return '👕';
+}
+function confColor(c) {
+  if(c>=90) return 'var(--success)';
+  if(c>=80) return 'var(--warning)';
+  return 'var(--accent3)';
+}
+function heightPct(h) {
+  return Math.round((h - 120) / (190 - 120) * 100);
+}
+
+function renderTable() {
+  const start = (currentPage - 1) * perPage;
+  const rows = filtered.slice(start, start + perPage);
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.style.animationDelay = (i * 0.04) + 's';
+    tr.innerHTML = `
+      <td><span class="id-cell">#${String(r.id).padStart(3,'0')}</span></td>
+      <td>
+        <div class="height-bar">
+          <span>${r.height}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${heightPct(r.height)}%"></div></div>
+        </div>
+      </td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;">${r.weight} kg</td>
+      <td>${r.age} <span style="color:var(--muted);font-size:0.75rem;">yrs</span></td>
+      <td class="${r.gender==='Male'?'gender-m':'gender-f'}">${r.gender==='Male'?'♂':'♀'} ${r.gender}</td>
+      <td><span class="body-type-pill">⬡ ${r.body}</span></td>
+      <td><span class="size-badge ${getStyleClass(r.style)}">${getStyleIcon(r.style)} ${r.style}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:50px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+            <div style="width:${r.conf}%;height:100%;background:${confColor(r.conf)};border-radius:3px;"></div>
+          </div>
+          <span style="font-size:0.75rem;font-weight:600;color:${confColor(r.conf)};font-family:'JetBrains Mono',monospace;">${r.conf}%</span>
+        </div>
+      </td>
+      <td><button class="action-btn" onclick="deleteRow(${r.id})"><i class="fas fa-trash" style="font-size:11px;margin-right:4px;"></i>Del</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  const total = filtered.length;
+  document.getElementById('pageInfo').textContent = `Showing ${start+1}–${Math.min(start+perPage,total)} of ${total} records`;
+  ['pg1','pg2'].forEach((id,idx) => {
+    const btn = document.getElementById(id);
+    if(btn) btn.className = 'page-btn' + (currentPage === idx+1 ? ' active' : '');
+  });
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const g = document.getElementById('genderFilter').value;
+  const s = document.getElementById('styleFilter').value;
+  const b = document.getElementById('bodyFilter').value;
+  filtered = allData.filter(r => {
+    const match = !q || r.id.toString().includes(q) || r.body.toLowerCase().includes(q) || r.style.toLowerCase().includes(q);
+    return match && (!g || r.gender===g) && (!s || r.style===s) && (!b || r.body===b);
+  });
+  currentPage = 1;
+  renderTable();
+}
+
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('genderFilter').value = '';
+  document.getElementById('styleFilter').value = '';
+  document.getElementById('bodyFilter').value = '';
+  filtered = [...allData];
+  currentPage = 1;
+  renderTable();
+}
+
+function sortTable(key) {
+  if(sortKey === key) sortDir *= -1; else sortDir = 1;
+  sortKey = key;
+  const map = {id:'id',height:'height',weight:'weight',age:'age',gender:'gender',body:'body',style:'style'};
+  filtered.sort((a,b) => {
+    const av = a[map[key]], bv = b[map[key]];
+    return (av < bv ? -1 : av > bv ? 1 : 0) * sortDir;
+  });
+  renderTable();
+}
+
+function changePage(dir) {
+  const max = Math.ceil(filtered.length / perPage);
+  currentPage = Math.max(1, Math.min(max, currentPage + dir));
+  renderTable();
+}
+function goPage(p) { currentPage = p; renderTable(); }
+
+function deleteRow(id) {
+  filtered = filtered.filter(r => r.id !== id);
+  renderTable();
+}
+
+renderTable();
+
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Casual','Formal','Sporty'],
+    datasets: [{data:[68,20,12],backgroundColor:['#63B3ED','#9F7AEA','#68D391'],borderWidth:0,hoverOffset:4}]
+  },
+  options: {responsive:true,maintainAspectRatio:true,cutout:'72%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.parsed+'%'}}}}
+});
+
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [{label:'Predictions',data:[38,52,45,61,58,42,34],backgroundColor:'rgba(99,179,237,0.25)',borderColor:'#63B3ED',borderWidth:1.5,borderRadius:5}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#718096',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#718096',font:{size:11}}}}}
+});
+</script>
+</body>
+</html>

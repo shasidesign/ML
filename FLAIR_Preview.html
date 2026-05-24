@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FLAIR — UI Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#F5F0E8;--gold:#C9A96E;--gold-lt:#E8D5B0;
+  --dark:#0E0E0E;--dark-2:#161616;--dark-3:#1E1E1E;--dark-4:#2A2A2A;
+  --text:#E8E0D0;--muted:#888880;--green:#4ADE80;
+  --radius:16px;--radius-sm:10px;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-serif:'DM Serif Display',serif;
+  --font-body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--dark);color:var(--text);font-family:var(--font-body);overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+
+/* NAVBAR */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:20px 60px;
+  background:rgba(14,14,14,0.9);border-bottom:1px solid rgba(201,169,110,0.15);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:var(--font-display);font-size:28px;letter-spacing:4px;color:var(--cream)}
+.logo-dot{color:var(--gold)}
+.nav-links{list-style:none;display:flex;gap:36px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+.nav-badge{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--gold);padding:6px 14px;border-radius:20px}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:140px 24px 80px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,169,110,0.12) 0%,transparent 70%),var(--dark)}
+.hero::before{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(201,169,110,0.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,169,110,0.06) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none}
+.hero-bg-text{position:absolute;font-family:var(--font-display);font-size:clamp(120px,22vw,300px);
+  color:rgba(201,169,110,0.04);letter-spacing:20px;pointer-events:none;
+  top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap}
+.hero-content{position:relative;z-index:2;max-width:780px}
+.hero-tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(201,169,110,0.3);padding:8px 20px;border-radius:20px;
+  margin-bottom:28px;background:rgba(201,169,110,0.06)}
+.hero-title{font-family:var(--font-display);font-size:clamp(64px,10vw,120px);letter-spacing:4px;
+  color:var(--cream);line-height:.95;margin-bottom:24px}
+.hero-title em{font-family:var(--font-serif);font-style:italic;color:var(--gold);font-size:.9em}
+.hero-sub{font-size:18px;color:var(--muted);max-width:520px;margin:0 auto 40px;line-height:1.7}
+.hero-actions{display:flex;gap:16px;justify-content:center;margin-bottom:60px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--dark);
+  font-size:15px;font-weight:600;padding:14px 32px;border-radius:var(--radius-sm);text-decoration:none;
+  border:none;cursor:pointer;box-shadow:0 4px 24px rgba(201,169,110,0.25)}
+.btn-ghost{display:inline-flex;align-items:center;background:transparent;color:var(--text);
+  font-size:15px;padding:14px 28px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.15);
+  text-decoration:none}
+.hero-stats{position:relative;z-index:2;display:flex;align-items:center;gap:40px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(201,169,110,0.15);
+  padding:24px 40px;border-radius:var(--radius);backdrop-filter:blur(10px)}
+.stat{text-align:center}
+.stat-num{display:block;font-family:var(--font-display);font-size:36px;letter-spacing:2px;color:var(--gold)}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.stat-divider{width:1px;height:40px;background:rgba(201,169,110,0.2)}
+
+/* FEATURES */
+.features-section{padding:120px 60px;background:var(--dark-2);border-top:1px solid rgba(255,255,255,0.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.section-title{font-family:var(--font-display);font-size:clamp(36px,5vw,60px);letter-spacing:2px;
+  color:var(--cream);line-height:1.05;margin-bottom:48px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:1200px;margin:0 auto}
+.feature-card{background:var(--dark-3);border:1px solid rgba(255,255,255,0.05);border-radius:var(--radius);padding:40px 32px}
+.feature-card.fc-accent{background:linear-gradient(135deg,rgba(201,169,110,0.12),rgba(201,169,110,0.04));border-color:rgba(201,169,110,0.25)}
+.feature-icon{font-size:36px;margin-bottom:20px}
+.feature-card h3{font-family:var(--font-display);font-size:24px;letter-spacing:2px;color:var(--cream);margin-bottom:12px}
+.feature-card p{font-size:15px;color:var(--muted);line-height:1.7}
+
+/* PREDICT */
+.predict-section{padding:120px 60px;background:var(--dark)}
+.predict-wrapper{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:80px;align-items:center}
+.predict-title{font-family:var(--font-display);font-size:clamp(40px,5vw,64px);letter-spacing:2px;color:var(--cream);line-height:1.0;margin-bottom:16px}
+.predict-sub{font-size:15px;color:var(--muted);margin-bottom:40px;line-height:1.7}
+.predict-steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;align-items:center;gap:16px;font-size:15px;color:var(--muted)}
+.step-num{font-family:var(--font-display);font-size:20px;color:var(--gold);letter-spacing:1px;min-width:32px}
+
+.predict-form{background:var(--dark-3);border:1px solid rgba(255,255,255,0.06);border-radius:24px;
+  padding:48px 40px;display:flex;flex-direction:column;gap:20px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group label{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;gap:6px}
+.unit{background:rgba(201,169,110,0.15);color:var(--gold);padding:2px 8px;border-radius:4px;font-size:10px}
+input,select{width:100%;padding:14px 16px;background:var(--dark-4);border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius-sm);color:var(--cream);font-size:15px;outline:none;appearance:none;-webkit-appearance:none}
+input::placeholder{color:rgba(136,136,128,0.6)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23C9A96E' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+.btn-submit{width:100%;padding:16px 24px;background:var(--gold);color:var(--dark);font-size:16px;font-weight:700;
+  border:none;border-radius:var(--radius-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  gap:10px;box-shadow:0 4px 24px rgba(201,169,110,0.3);margin-top:8px}
+
+/* RESULT HERO */
+.result-hero{min-height:50vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:140px 24px 80px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(201,169,110,0.14) 0%,transparent 70%),var(--dark)}
+.result-bg-text{position:absolute;font-family:var(--font-display);font-size:clamp(180px,35vw,420px);
+  color:rgba(201,169,110,0.05);pointer-events:none;user-select:none;
+  top:50%;left:50%;transform:translate(-50%,-50%)}
+.result-summary{position:relative;z-index:2}
+.result-tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:var(--green);border:1px solid rgba(74,222,128,0.3);padding:8px 20px;border-radius:20px;
+  margin-bottom:20px;background:rgba(74,222,128,0.06)}
+.result-title{font-family:var(--font-display);font-size:clamp(36px,6vw,72px);letter-spacing:3px;
+  color:var(--cream);margin-bottom:24px}
+.size-badge{display:inline-flex;align-items:center;justify-content:center;width:120px;height:120px;
+  background:var(--gold);color:var(--dark);font-family:var(--font-display);font-size:56px;letter-spacing:4px;
+  border-radius:50%;box-shadow:0 0 60px rgba(201,169,110,0.4),0 0 120px rgba(201,169,110,0.15);margin-bottom:16px}
+.size-label-full{font-size:20px;font-weight:300;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
+
+/* SIZE DETAILS */
+.size-details-section{padding:60px;background:var(--dark-2);border-top:1px solid rgba(255,255,255,0.04)}
+.size-details-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:900px;margin:0 auto 24px}
+.size-detail-card{background:var(--dark-3);border:1px solid rgba(255,255,255,0.05);border-radius:var(--radius);
+  padding:24px;display:flex;align-items:center;gap:16px}
+.sd-icon{font-size:28px}
+.sd-info{display:flex;flex-direction:column;gap:4px}
+.sd-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.sd-value{font-size:20px;font-weight:600;color:var(--cream)}
+.size-desc{text-align:center;font-size:16px;color:var(--muted);max-width:500px;margin:0 auto;font-style:italic}
+
+/* RECO */
+.reco-section{padding:100px 60px;background:var(--dark);text-align:center}
+.reco-sub{font-size:16px;color:var(--muted);margin-bottom:48px;margin-top:-32px}
+.reco-sub strong{color:var(--gold)}
+.reco-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;max-width:1000px;margin:0 auto}
+.reco-card{background:var(--dark-3);border:1px solid rgba(255,255,255,0.05);border-radius:20px;overflow:hidden;text-align:left}
+.reco-img-wrap{position:relative;overflow:hidden;height:200px;
+  background:linear-gradient(135deg,var(--dark-4),var(--dark-2));display:flex;align-items:center;justify-content:center}
+.reco-img-wrap .placeholder{font-size:60px}
+.reco-tag{position:absolute;top:16px;left:16px;background:var(--gold);color:var(--dark);
+  font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px}
+.reco-info{padding:24px}
+.reco-info h4{font-family:var(--font-display);font-size:22px;letter-spacing:1px;color:var(--cream);margin-bottom:6px}
+.reco-info p{font-size:13px;color:var(--muted)}
+
+/* CTA */
+.result-cta{padding:80px 60px;text-align:center;background:var(--dark-2);border-top:1px solid rgba(255,255,255,0.04)}
+.result-cta h2{font-family:var(--font-display);font-size:40px;letter-spacing:3px;color:var(--cream);margin-bottom:12px}
+.result-cta p{color:var(--muted);margin-bottom:32px}
+
+/* FOOTER */
+.footer{padding:48px 60px;background:var(--dark-2);border-top:1px solid rgba(201,169,110,0.12);text-align:center;color:var(--muted);font-size:14px}
+.footer-logo{font-family:var(--font-display);font-size:28px;letter-spacing:4px;color:var(--cream);margin-bottom:12px}
+.footer-copy{margin-top:8px;font-size:12px}
+
+.divider{height:4px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0}
+.preview-label{text-align:center;padding:20px;background:rgba(201,169,110,0.08);
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);
+  border:1px dashed rgba(201,169,110,0.3)}
+</style>
+</head>
+<body>
+
+<div class="preview-label">━━ PAGE 1: HOME / INDEX.HTML ━━</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">FLAIR<span class="logo-dot">.</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Predict</a></li>
+  </ul>
+  <div class="nav-badge">AI Powered</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">FASHION</div>
+  <div class="hero-content">
+    <div class="hero-tag">✦ Powered by Machine Learning</div>
+    <h1 class="hero-title">Dress Smarter.<br/><em>Fit Better.</em></h1>
+    <p class="hero-sub">Enter your measurements and let our AI predict your perfect size — plus curated outfit picks for your exact body type.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Get My Size →</a>
+      <a href="#" class="btn-ghost">How It Works</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">99%</span><span class="stat-label">Accuracy</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num">4</span><span class="stat-label">Body Types</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="section-label">✦ What We Offer</div>
+  <h2 class="section-title">Built for real bodies,<br/>real style.</h2>
+  <div class="features-grid">
+    <div class="feature-card fc-accent"><div class="feature-icon">🤖</div><h3>AI Prediction</h3><p>Our Decision Tree ML model trained on real anthropometric data finds your size in milliseconds.</p></div>
+    <div class="feature-card"><div class="feature-icon">👕</div><h3>Smart Outfits</h3><p>Get curated outfit recommendations tailored specifically to your body type and style profile.</p></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><h3>Detailed Measurements</h3><p>Receive chest and waist measurement guides alongside your predicted size for perfect shopping.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔒</div><h3>Private & Secure</h3><p>Your data stays on our servers. We never sell or share your personal measurements.</p></div>
+  </div>
+</section>
+
+<!-- PREDICT FORM -->
+<section class="predict-section">
+  <div class="predict-wrapper">
+    <div class="predict-left">
+      <div class="section-label">✦ Size Predictor</div>
+      <h2 class="predict-title">Find Your<br/>Perfect Fit.</h2>
+      <p class="predict-sub">Fill in your details — takes under 30 seconds. Our ML model handles the rest.</p>
+      <div class="predict-steps">
+        <div class="step"><span class="step-num">01</span><span>Enter measurements</span></div>
+        <div class="step"><span class="step-num">02</span><span>Select body type</span></div>
+        <div class="step"><span class="step-num">03</span><span>Get instant results</span></div>
+      </div>
+    </div>
+    <div class="predict-right">
+      <div class="predict-form">
+        <div class="form-row">
+          <div class="form-group"><label>Height <span class="unit">cm</span></label><input type="number" placeholder="e.g. 175"/></div>
+          <div class="form-group"><label>Weight <span class="unit">kg</span></label><input type="number" placeholder="e.g. 70"/></div>
+        </div>
+        <div class="form-group"><label>Age</label><input type="number" placeholder="e.g. 24"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Gender</label><select><option>Male</option><option>Female</option></select></div>
+          <div class="form-group"><label>Body Type</label><select><option>Slim</option><option>Average</option><option>Athletic</option><option>Heavy</option></select></div>
+        </div>
+        <button class="btn-submit"><span>Predict My Size</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<div class="preview-label" style="margin-top:0">━━ PAGE 2: RESULT.HTML — shown after prediction ━━</div>
+
+<!-- RESULT HERO -->
+<section class="result-hero">
+  <div class="result-bg-text">L</div>
+  <div class="result-summary">
+    <div class="result-tag">✦ Prediction Complete</div>
+    <h1 class="result-title">Your Perfect Size</h1>
+    <div class="size-badge">L</div>
+    <p class="size-label-full">Large</p>
+  </div>
+</section>
+
+<!-- SIZE DETAILS -->
+<section class="size-details-section">
+  <div class="size-details-grid">
+    <div class="size-detail-card"><div class="sd-icon">📏</div><div class="sd-info"><span class="sd-label">Chest</span><span class="sd-value">42–44"</span></div></div>
+    <div class="size-detail-card"><div class="sd-icon">📐</div><div class="sd-info"><span class="sd-label">Waist</span><span class="sd-value">36–38"</span></div></div>
+    <div class="size-detail-card"><div class="sd-icon">🧍</div><div class="sd-info"><span class="sd-label">Body Type</span><span class="sd-value">Athletic</span></div></div>
+    <div class="size-detail-card"><div class="sd-icon">📋</div><div class="sd-info"><span class="sd-label">Profile</span><span class="sd-value">Male, 24 yrs</span></div></div>
+  </div>
+  <p class="size-desc">Great for athletic or broader builds.</p>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section class="reco-section">
+  <div class="section-label">✦ AI-Curated For You</div>
+  <h2 class="section-title">Recommended Styles</h2>
+  <p class="reco-sub">Handpicked for <strong>Athletic</strong> body type at size <strong>L</strong>.</p>
+  <div class="reco-grid">
+    <div class="reco-card"><div class="reco-img-wrap"><div class="placeholder">🏋️</div><div class="reco-tag">Performance</div></div><div class="reco-info"><h4>Gym Fit Wear</h4><p>Perfect for Athletic body type</p></div></div>
+    <div class="reco-card"><div class="reco-img-wrap"><div class="placeholder">🧥</div><div class="reco-tag">Trending</div></div><div class="reco-info"><h4>Sports Jacket</h4><p>Perfect for Athletic body type</p></div></div>
+    <div class="reco-card"><div class="reco-img-wrap"><div class="placeholder">👕</div><div class="reco-tag">New Arrival</div></div><div class="reco-info"><h4>Athletic Shirt</h4><p>Perfect for Athletic body type</p></div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="result-cta">
+  <h2>Not quite right?</h2>
+  <p>Try adjusting your measurements or body type for a different result.</p>
+  <a href="#" class="btn-primary">← Predict Again</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">FLAIR<span class="logo-dot">.</span></div>
+  <p>AI Fashion Recommendation System — Built with Flask & Scikit-learn</p>
+  <p class="footer-copy">© 2026 FLAIR. ML Project.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — AI Fashion</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050A14;--surface:#0D1525;--surface2:#131D30;--border:rgba(99,179,237,0.12);--accent:#63B3ED;--accent2:#9F7AEA;--text:#E2E8F0;--muted:#718096;--error:#FC8181;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:100%;max-width:420px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;margin-bottom:2rem;text-decoration:none;color:var(--text);}
+  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  h1{font-size:1.5rem;font-weight:700;margin-bottom:6px;}
+  .sub{font-size:0.85rem;color:var(--muted);margin-bottom:1.75rem;}
+  .field{margin-bottom:16px;}
+  label{display:block;font-size:0.7rem;font-weight:600;color:rgba(99,179,237,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;}
+  .pw-wrap{position:relative;}
+  input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:0.875rem;outline:none;transition:border-color 0.2s;}
+  input::placeholder{color:var(--muted);}
+  input:focus{border-color:var(--accent);}
+  .eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:16px;background:none;border:none;padding:0;width:auto;margin:0;}
+  .btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;padding:13px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:20px;transition:opacity 0.2s;}
+  .btn:hover{opacity:0.88;}
+  .flash{background:rgba(252,129,129,0.08);border:1px solid rgba(252,129,129,0.25);color:var(--error);padding:10px 14px;border-radius:8px;font-size:0.8rem;margin-bottom:16px;}
+  .link-row{text-align:center;margin-top:20px;font-size:0.825rem;color:var(--muted);}
+  .link-row a{color:var(--accent);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="card">
+  <a href="/" class="logo"><div class="logo-icon">👗</div>AI Fashion</a>
+  <h1>Create Account</h1>
+  <p class="sub">Join and start getting AI fashion predictions.</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat,msg in messages %}<div class="flash">{{ msg }}</div>{% endfor %}{% endif %}
+  {% endwith %}
+  <form method="POST" action="/register">
+    <div class="field">
+      <label>Username</label>
+      <input type="text" name="username" placeholder="choose a username" required>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input type="password" name="password" id="pw" placeholder="create a password" required>
+        <button type="button" class="eye" onclick="togglePw()">👁️</button>
+      </div>
+    </div>
+    <button type="submit" class="btn">Create Account →</button>
+  </form>
+  <div class="link-row">Already have an account? <a href="/login">Sign In</a></div>
+</div>
+<script>
+function togglePw(){
+  const p=document.getElementById('pw');
+  p.type=p.type==='password'?'text':'password';
+}
+</script>
+</body>
+</html>

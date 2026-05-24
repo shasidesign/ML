@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Feedback — AI Fashion</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{--bg:#050A14;--surface:#0D1525;--surface2:#131D30;--border:rgba(99,179,237,0.12);--accent:#63B3ED;--accent2:#9F7AEA;--accent3:#FC8181;--text:#E2E8F0;--muted:#718096;--success:#68D391;--warning:#F6AD55;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;}
+  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .nav{display:flex;gap:4px;}
+  .nav a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;transition:all 0.2s;}
+  .nav a:hover{color:var(--text);background:var(--surface2);}
+  .nav a.active{color:var(--accent);background:rgba(99,179,237,0.08);}
+  .container{max-width:1100px;margin:0 auto;padding:2.5rem 2rem;}
+  .two-col{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;}
+  .panel-title{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px;}
+  .panel-sub{font-size:0.78rem;color:var(--muted);margin-bottom:1.75rem;}
+
+  .form-group{margin-bottom:18px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+  label{display:block;font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;}
+  input[type=text],input[type=email],textarea,select{
+    width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+    padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.875rem;outline:none;transition:border 0.2s;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+  input::placeholder,textarea::placeholder{color:var(--muted);}
+  textarea{resize:vertical;min-height:90px;line-height:1.5;}
+  select option{background:#0D1525;}
+
+  .star-group{display:flex;gap:6px;margin-bottom:6px;}
+  .star{font-size:1.75rem;cursor:pointer;transition:transform 0.1s;filter:grayscale(1);opacity:0.35;}
+  .star.lit{filter:none;opacity:1;}
+  .star:hover{transform:scale(1.15);}
+  .rating-label{font-size:0.78rem;color:var(--muted);height:20px;}
+
+  .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+  .cat-btn{
+    background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+    padding:10px 8px;text-align:center;cursor:pointer;transition:all 0.2s;
+  }
+  .cat-btn:hover,.cat-btn.active{border-color:var(--accent);background:rgba(99,179,237,0.08);}
+  .cat-btn.active .cat-label{color:var(--accent);}
+  .cat-icon{font-size:1.4rem;display:block;margin-bottom:4px;}
+  .cat-label{font-size:0.72rem;font-weight:600;color:var(--muted);}
+
+  .slider-group{margin-bottom:18px;}
+  .slider-header{display:flex;justify-content:space-between;margin-bottom:8px;}
+  .slider-val{font-size:0.85rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent);}
+  input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;background:var(--surface2);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg);}
+
+  .submit-btn{
+    width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;border:none;border-radius:12px;padding:14px;
+    font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;
+    transition:opacity 0.2s;letter-spacing:-0.01em;
+  }
+  .submit-btn:hover{opacity:0.88;}
+
+  .success-state{display:none;text-align:center;padding:2.5rem 1rem;}
+  .success-icon{font-size:3.5rem;margin-bottom:1rem;}
+  .success-title{font-size:1.2rem;font-weight:700;margin-bottom:6px;}
+  .success-sub{font-size:0.85rem;color:var(--muted);}
+
+  .reviews-section{}
+  .reviews-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+  .avg-score{font-size:3rem;font-weight:700;color:var(--warning);line-height:1;}
+  .avg-sub{font-size:0.75rem;color:var(--muted);margin-top:4px;}
+  .rating-bars{flex:1;margin-left:20px;}
+  .rating-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:5px;}
+  .rb-label{font-size:0.72rem;color:var(--muted);width:16px;text-align:right;}
+  .rb-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+  .rb-fill{height:100%;background:var(--warning);border-radius:3px;}
+  .rb-count{font-size:0.7rem;color:var(--muted);width:20px;font-family:'JetBrains Mono',monospace;}
+
+  .review-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:12px;animation:fadeIn 0.3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .review-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .reviewer{display:flex;align-items:center;gap:10px;}
+  .reviewer-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
+  .reviewer-name{font-size:0.875rem;font-weight:600;}
+  .reviewer-sub{font-size:0.72rem;color:var(--muted);margin-top:1px;}
+  .review-stars{font-size:0.8rem;letter-spacing:1px;}
+  .review-text{font-size:0.825rem;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+  .review-meta{display:flex;gap:8px;align-items:center;}
+  .review-tag{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-size:0.68rem;color:var(--muted);}
+  .review-date{font-size:0.68rem;color:var(--muted);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+
+  @media(max-width:900px){.two-col{grid-template-columns:1fr;}.nav{display:none;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><div class="logo-icon">👗</div>AI Fashion</div>
+  <nav class="nav">
+    <a href="#">Home</a>
+    <a href="#">Dashboard</a>
+    <a href="#">History</a>
+    <a href="#">Favourites</a>
+    <a href="#" class="active">Feedback</a>
+  </nav>
+  <span style="background:rgba(246,173,85,0.1);color:var(--warning);border:1px solid rgba(246,173,85,0.2);padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;">4.8 ★ Avg Rating</span>
+</div>
+
+<div class="container">
+  <div style="margin-bottom:2rem;">
+    <h1 style="font-size:1.75rem;font-weight:700;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">User Feedback</h1>
+    <p style="font-size:0.8rem;color:var(--muted);margin-top:4px;">Help us improve the AI Fashion ML model · Your insights matter</p>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">Share Your Experience</div>
+      <div class="panel-sub">Rate the AI model's predictions and help us improve</div>
+
+      <div id="feedbackForm">
+        <div class="form-row">
+          <div>
+            <label>Your Name</label>
+            <input type="text" id="fname" placeholder="e.g. Arjun Sharma">
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" id="femail" placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Feedback Category</label>
+          <div class="category-grid">
+            <div class="cat-btn active" onclick="setCategory(this,'accuracy')"><span class="cat-icon">🎯</span><span class="cat-label">ML Accuracy</span></div>
+            <div class="cat-btn" onclick="setCategory(this,'outfit')"><span class="cat-icon">👗</span><span class="cat-label">Outfits</span></div>
+            <div class="cat-btn" onclick="setCategory(this,'chatbot')"><span class="cat-icon">🤖</span><span class="cat-label">Chatbot</span></div>
+            <div class="cat-btn" onclick="setCategory(this,'ui')"><span class="cat-icon">🖥️</span><span class="cat-label">UI / UX</span></div>
+            <div class="cat-btn" onclick="setCategory(this,'size')"><span class="cat-icon">📏</span><span class="cat-label">Size Predict</span></div>
+            <div class="cat-btn" onclick="setCategory(this,'other')"><span class="cat-icon">💡</span><span class="cat-label">Other</span></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Overall Rating</label>
+          <div class="star-group" id="starGroup">
+            <span class="star lit" onclick="setRating(1)">⭐</span>
+            <span class="star lit" onclick="setRating(2)">⭐</span>
+            <span class="star lit" onclick="setRating(3)">⭐</span>
+            <span class="star lit" onclick="setRating(4)">⭐</span>
+            <span class="star" onclick="setRating(5)">⭐</span>
+          </div>
+          <div class="rating-label" id="ratingLabel">Very Good · 4/5</div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <label style="margin-bottom:0;">Prediction Accuracy</label>
+            <span class="slider-val" id="accVal">80%</span>
+          </div>
+          <input type="range" min="0" max="100" value="80" step="5" oninput="document.getElementById('accVal').textContent=this.value+'%'">
+        </div>
+
+        <div class="form-group">
+          <label>Your Comments</label>
+          <textarea id="fcomment" placeholder="Tell us what you loved, what could be better, or any specific prediction issues…"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>How did you use AI Fashion?</label>
+          <select>
+            <option>Size Prediction</option>
+            <option>Outfit Recommendations</option>
+            <option>AI Chat Assistant</option>
+            <option>Fashion Trend Insights</option>
+            <option>Multiple Features</option>
+          </select>
+        </div>
+
+        <button class="submit-btn" onclick="submitFeedback()">Submit Feedback <i class="fas fa-paper-plane" style="margin-left:8px;font-size:14px;"></i></button>
+      </div>
+
+      <div class="success-state" id="successState">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Thank you for your feedback!</div>
+        <div class="success-sub">Your insights help improve our IBM ML model accuracy.<br>We'll review your submission shortly.</div>
+        <button onclick="resetForm()" style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 24px;color:var(--muted);font-family:inherit;font-size:0.875rem;cursor:pointer;">Submit Another</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="reviews-header">
+          <div>
+            <div class="avg-score">4.8</div>
+            <div class="avg-sub">⭐ out of 5 · 48 reviews</div>
+          </div>
+          <div class="rating-bars">
+            <div class="rating-bar-row"><span class="rb-label">5</span><div class="rb-track"><div class="rb-fill" style="width:78%"></div></div><span class="rb-count">37</span></div>
+            <div class="rating-bar-row"><span class="rb-label">4</span><div class="rb-track"><div class="rb-fill" style="width:14%"></div></div><span class="rb-count">7</span></div>
+            <div class="rating-bar-row"><span class="rb-label">3</span><div class="rb-track"><div class="rb-fill" style="width:6%"></div></div><span class="rb-count">3</span></div>
+            <div class="rating-bar-row"><span class="rb-label">2</span><div class="rb-track"><div class="rb-fill" style="width:2%"></div></div><span class="rb-count">1</span></div>
+            <div class="rating-bar-row"><span class="rb-label">1</span><div class="rb-track"><div class="rb-fill" style="width:0%"></div></div><span class="rb-count">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reviews-section">
+        <div style="font-size:0.875rem;font-weight:600;margin-bottom:12px;">Recent Reviews</div>
+        <div id="reviewsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentRating = 4;
+let currentCategory = 'accuracy';
+
+const ratingLabels = ['','Terrible · 1/5','Poor · 2/5','Okay · 3/5','Very Good · 4/5','Excellent · 5/5'];
+
+function setRating(r) {
+  currentRating = r;
+  document.querySelectorAll('.star').forEach((s,i) => {
+    s.className = 'star' + (i < r ? ' lit' : '');
+  });
+  document.getElementById('ratingLabel').textContent = ratingLabels[r];
+}
+
+function setCategory(btn, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCategory = cat;
+}
+
+const reviews = [
+  {name:'Priya N.',avatar:'PN',color:'#9F7AEA',stars:5,category:'ML Accuracy',text:'The size prediction was spot-on! I\'m a slim body type and the model correctly identified casual as my primary style. Really impressive accuracy.',date:'2d ago'},
+  {name:'Arjun S.',avatar:'AS',color:'#63B3ED',stars:5,category:'Chatbot',text:'The AI chatbot gave really detailed outfit recommendations for my body type. The IBM ML model is clearly well-trained with real fashion data.',date:'4d ago'},
+  {name:'Rahul P.',avatar:'RP',color:'#68D391',stars:4,category:'Outfit',text:'Good outfit suggestions overall. Could add more options for plus-size body types. The casual predictions are excellent though.',date:'1w ago'},
+  {name:'Sneha K.',avatar:'SK',color:'#F6AD55',stars:5,category:'UI / UX',text:'The interface is clean and easy to use. The prediction history is really detailed and the analytics give great insights. Love the dark theme!',date:'1w ago'},
+];
+
+let displayedReviews = [...reviews];
+
+function renderReviews() {
+  const container = document.getElementById('reviewsList');
+  container.innerHTML = '';
+  displayedReviews.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'review-card';
+    div.innerHTML = `
+      <div class="review-top">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:${r.color}22;color:${r.color};">${r.avatar}</div>
+          <div>
+            <div class="reviewer-name">${r.name}</div>
+            <div class="reviewer-sub">${r.category}</div>
+          </div>
+        </div>
+        <div class="review-stars" style="color:var(--warning);">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+      </div>
+      <div class="review-text">${r.text}</div>
+      <div class="review-meta">
+        <span class="review-tag">${r.category}</span>
+        <span class="review-date">${r.date}</span>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function submitFeedback() {
+  const name = document.getElementById('fname').value.trim() || 'Anonymous';
+  const comment = document.getElementById('fcomment').value.trim() || 'No comment provided.';
+  const newReview = {
+    name: name.slice(0,12),
+    avatar: name.slice(0,2).toUpperCase(),
+    color: ['#63B3ED','#9F7AEA','#68D391','#F6AD55'][Math.floor(Math.random()*4)],
+    stars: currentRating,
+    category: currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1),
+    text: comment,
+    date: 'Just now'
+  };
+  displayedReviews.unshift(newReview);
+  renderReviews();
+  document.getElementById('feedbackForm').style.display = 'none';
+  document.getElementById('successState').style.display = 'block';
+}
+
+function resetForm() {
+  document.getElementById('feedbackForm').style.display = 'block';
+  document.getElementById('successState').style.display = 'none';
+  document.getElementById('fname').value = '';
+  document.getElementById('femail').value = '';
+  document.getElementById('fcomment').value = '';
+  setRating(4);
+}
+
+renderReviews();
+</script>
+</body>
+</html>

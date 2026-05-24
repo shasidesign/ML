@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>User Profile</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+
+AI Fashion
+
+</div>
+
+<ul>
+
+<li><a href="/">Home</a></li>
+
+<li><a href="/dashboard">Dashboard</a></li>
+
+<li><a href="/logout">Logout</a></li>
+
+</ul>
+
+</nav>
+
+<div class="dashboard-container">
+
+<h1>User Profile</h1>
+
+<div class="stats-card">
+
+<h2>Username</h2>
+
+<p>{{ user.username }}</p>
+
+</div>
+
+<div class="stats-card">
+
+<h2>Free Trial Usage</h2>
+
+<p>{{ user.trial_count }}/5</p>
+<div class="stats-card">
+
+<h2>Last Login</h2>
+
+<p>{{ user.last_login }}</p>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
