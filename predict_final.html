@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}FitAI — AI Style Predictor{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="section-badge">Machine Learning</div>
+  <h1 class="page-title">AI Style <span class="gradient-text">Predictor</span></h1>
+  <p class="page-subtitle">Enter your measurements. Our RandomForest ML model predicts your perfect style profile, clothing size, and outfit recommendations in seconds.</p>
+</section>
+
+<section class="predict-section">
+  <div class="predict-grid">
+    <!-- Input Form -->
+    <div class="predict-form-card glass-card">
+      <div class="card-header">
+        <span class="card-icon">📏</span>
+        <div>
+          <h3>Your Measurements</h3>
+          <p>All fields are used as ML features</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <div class="input-wrap">
+            <input type="number" id="height" value="170" min="140" max="220" placeholder="170">
+            <span class="input-unit">cm</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <div class="input-wrap">
+            <input type="number" id="weight" value="65" min="30" max="200" placeholder="65">
+            <span class="input-unit">kg</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Age</label>
+          <div class="input-wrap">
+            <input type="number" id="age" value="25" min="13" max="80" placeholder="25">
+            <span class="input-unit">yrs</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="gender" class="form-select">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Non-binary / Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Body Type</label>
+        <div class="body-type-grid" id="bodyTypeGrid">
+          <button class="body-btn active" data-val="average">Average</button>
+          <button class="body-btn" data-val="slim">Slim</button>
+          <button class="body-btn" data-val="athletic">Athletic</button>
+          <button class="body-btn" data-val="muscular">Muscular</button>
+          <button class="body-btn" data-val="heavy">Heavy</button>
+          <button class="body-btn" data-val="hourglass">Hourglass</button>
+          <button class="body-btn" data-val="petite">Petite</button>
+          <button class="body-btn" data-val="curvy">Curvy</button>
+        </div>
+      </div>
+
+      <div class="bmi-preview" id="bmiPreview">
+        <span class="bmi-label">Live BMI</span>
+        <span class="bmi-value" id="liveBMI">22.5</span>
+        <span class="bmi-cat" id="liveBMICat">Normal weight</span>
+      </div>
+
+      <button class="btn btn-primary btn-full predict-btn" id="predictBtn" onclick="runPrediction()">
+        <span id="predictBtnText">✦ Run AI Prediction</span>
+        <div class="btn-spinner hidden" id="predictSpinner"></div>
+      </button>
+    </div>
+
+    <!-- Result Panel -->
+    <div class="result-panel" id="resultPanel">
+      <div class="result-placeholder" id="resultPlaceholder">
+        <div class="placeholder-icon">🤖</div>
+        <h3>Your Style Profile</h3>
+        <p>Fill in your measurements and click "Run AI Prediction" to see your personalized style report.</p>
+        <div class="placeholder-features">
+          <span>✦ Style Profile</span>
+          <span>✦ Size Recommendation</span>
+          <span>✦ Outfit Ideas</span>
+          <span>✦ Color Palette</span>
+        </div>
+      </div>
+
+      <div class="result-content hidden" id="resultContent">
+        <!-- Style Badge -->
+        <div class="result-hero">
+          <div class="result-style-icon" id="resultStyleIcon">👔</div>
+          <div class="result-style-info">
+            <div class="result-label">Your Style Profile</div>
+            <div class="result-style-name" id="resultStyleName">—</div>
+            <div class="result-alts" id="resultAlts"></div>
+          </div>
+          <div class="confidence-ring-wrap">
+            <svg class="conf-ring-svg" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="6"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="url(#ringGrad)" stroke-width="6"
+                      stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"
+                      id="confRingCircle" transform="rotate(-90 40 40)"/>
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00d4ff"/>
+                  <stop offset="100%" stop-color="#7b2ff7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="conf-ring-text">
+              <span id="confValue">—</span>
+              <small>conf.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="result-stats">
+          <div class="res-stat">
+            <span class="res-stat-val" id="resBMI">—</span>
+            <span class="res-stat-label">BMI</span>
+          </div>
+          <div class="res-stat">
+            <span class="res-stat-val" id="resBMICat">—</span>
+            <span class="res-stat-label">Category</span>
+          </div>
+          <div class="res-stat">
+            <span class="res-stat-val" id="resSize">—</span>
+            <span class="res-stat-label">Size</span>
+          </div>
+          <div class="res-stat">
+            <span class="res-stat-val" id="resSizeConf">—</span>
+            <span class="res-stat-label">Size Conf.</span>
+          </div>
+        </div>
+
+        <!-- Outfit Recommendations -->
+        <div class="result-outfits">
+          <h4>✦ Outfit Recommendations</h4>
+          <div class="outfits-list" id="outfitsList"></div>
+        </div>
+
+        <!-- Color Palette -->
+        <div class="result-palette">
+          <h4>✦ Your Color Palette</h4>
+          <div class="palette-swatches" id="paletteSwatch"></div>
+        </div>
+
+        <!-- Style Tip -->
+        <div class="result-tip" id="resultTip"></div>
+
+        <!-- Save Button -->
+        <button class="btn btn-outline btn-full" onclick="runPrediction()">↺ Run Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- History -->
+{% if session.get('username') %}
+<section class="predict-history-section">
+  <h2 class="section-title">Your Prediction <span class="gradient-text">History</span></h2>
+  <div class="history-grid" id="historyGrid">
+    <div class="loading-state">Loading history...</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/predict.js') }}"></script>
+{% endblock %}

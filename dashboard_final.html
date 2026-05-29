@@ -1,0 +1,133 @@
+
+{% extends "base.html" %}
+{% block title %}FitAI — Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-page">
+  <div class="dash-header">
+    <div>
+      <div class="section-badge">Personal Dashboard</div>
+      <h1 class="page-title">Welcome back, <span class="gradient-text" id="dashUsername">{{ username }}</span></h1>
+      <p class="page-subtitle">Your style analytics, prediction history, and fashion intelligence.</p>
+    </div>
+    <a href="/predict-page" class="btn btn-primary">✦ New Prediction</a>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card glass-card">
+      <div class="stat-card-icon">🎯</div>
+      <div class="stat-card-info">
+        <span class="stat-card-num" id="statPredictions">—</span>
+        <span class="stat-card-label">Total Predictions</span>
+      </div>
+      <div class="stat-card-trend up">↑ AI runs</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-card-icon">❤️</div>
+      <div class="stat-card-info">
+        <span class="stat-card-num" id="statFavorites">—</span>
+        <span class="stat-card-label">Saved Items</span>
+      </div>
+      <div class="stat-card-trend up">♡ wishlist</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-card-icon">💬</div>
+      <div class="stat-card-info">
+        <span class="stat-card-num" id="statChats">—</span>
+        <span class="stat-card-label">Chat Messages</span>
+      </div>
+      <div class="stat-card-trend">with StyleBot</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-card-icon">🏆</div>
+      <div class="stat-card-info">
+        <span class="stat-card-num" id="statTopStyle">—</span>
+        <span class="stat-card-label">Top Style</span>
+      </div>
+      <div class="stat-card-trend">your signature</div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="dash-grid">
+    <!-- Style Distribution Chart -->
+    <div class="dash-card glass-card">
+      <div class="dash-card-header">
+        <h3>Style Distribution</h3>
+        <span class="dash-badge">ML Analytics</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="styleChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Predictions -->
+    <div class="dash-card glass-card">
+      <div class="dash-card-header">
+        <h3>Recent Predictions</h3>
+        <a href="/predict-page" class="dash-link">Run New →</a>
+      </div>
+      <div class="predictions-list" id="predictionsList">
+        <div class="loading-state">Loading history...</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dash-card glass-card">
+      <div class="dash-card-header">
+        <h3>Quick Actions</h3>
+      </div>
+      <div class="quick-actions-grid">
+        <a href="/predict-page" class="qa-btn">
+          <span>🎯</span>
+          <div><strong>AI Predict</strong><small>Run ML model</small></div>
+        </a>
+        <a href="/products" class="qa-btn">
+          <span>🛍️</span>
+          <div><strong>Shop</strong><small>Browse catalog</small></div>
+        </a>
+        <a href="/chatbot" class="qa-btn">
+          <span>💬</span>
+          <div><strong>StyleBot</strong><small>Ask AI</small></div>
+        </a>
+        <a href="#" class="qa-btn" onclick="alert('Coming soon: Outfit generator!')">
+          <span>✨</span>
+          <div><strong>Generator</strong><small>Create outfits</small></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Style Tips -->
+    <div class="dash-card glass-card dash-tips">
+      <div class="dash-card-header">
+        <h3>AI Style Tips</h3>
+        <span class="dash-badge">Today's picks</span>
+      </div>
+      <div class="tips-list">
+        <div class="tip-item">
+          <span class="tip-num">01</span>
+          <p>Invest in <strong>3 quality basics</strong> before buying statement pieces. A great white tee, dark denim, and a tailored blazer solve 80% of outfit decisions.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-num">02</span>
+          <p><strong>Fit over brand</strong> — a well-fitted $30 tee always outperforms a $200 ill-fitted luxury top. Use our size predictor for accurate recommendations.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-num">03</span>
+          <p>Build a <strong>color story</strong> in your wardrobe. 3 neutrals + 1 accent color = infinite combinations with zero mismatches.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-num">04</span>
+          <p><strong>Seasonal transitions</strong> are your friend. Layer a summer dress with a blazer and ankle boots for a perfect autumn look.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

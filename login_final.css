@@ -1,0 +1,281 @@
+/* ── Login Page ─────────────────────────────────────────────────────────── */
+.login-body { overflow: hidden; }
+
+.back-btn {
+  position: fixed;
+  top: 24px; left: 24px;
+  z-index: 50;
+  padding: 8px 18px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(240,244,255,.7);
+  transition: all .2s;
+  backdrop-filter: blur(12px);
+}
+.back-btn:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+.login-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Lamp Panel ───────────────────────────────────────────────────────────── */
+.lamp-panel {
+  background: #020509;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 60px 48px;
+  position: relative;
+  border-right: 1px solid rgba(255,255,255,.06);
+  transition: background .5s;
+}
+.lamp-panel.lit { background: #03080f; }
+
+/* Lamp Scene */
+.lamp-scene {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 280px;
+}
+
+/* Cord */
+.lamp-cord {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  z-index: 2;
+}
+.cord-line {
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(255,255,255,.15), rgba(255,255,255,.35));
+  border-radius: 1px;
+  transition: height .3s;
+}
+.pull-handle {
+  margin-top: 4px;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.5);
+  transition: all .2s;
+  animation: swayHandle 3s ease-in-out infinite;
+}
+@keyframes swayHandle {
+  0%,100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+.pull-handle:hover {
+  background: rgba(0,212,255,.2);
+  border-color: rgba(0,212,255,.5);
+  color: #00d4ff;
+  animation: none;
+}
+.lamp-cord.pulling .cord-line { height: 110px; }
+.lamp-cord.pulling .pull-handle { animation: none; transform: translateY(20px); }
+
+/* Lamp Head */
+.lamp-head {
+  position: absolute;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lamp-shade {
+  width: 0;
+  height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-top: 80px solid #1a1a2e;
+  filter: drop-shadow(0 0 8px rgba(0,0,0,.5));
+  transition: border-top-color .5s;
+}
+.lamp-panel.lit .lamp-shade { border-top-color: #c0a840; }
+
+.lamp-bulb {
+  width: 24px; height: 24px;
+  background: rgba(255,255,255,.1);
+  border-radius: 50%;
+  margin-top: -12px;
+  transition: all .5s;
+}
+.lamp-panel.lit .lamp-bulb {
+  background: #fff8e0;
+  box-shadow: 0 0 12px #fff8e0, 0 0 32px #ffd700, 0 0 64px rgba(255,215,0,.4);
+}
+
+.lamp-glow {
+  position: absolute;
+  top: 80px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,.15), transparent 70%);
+  opacity: 0;
+  transition: opacity .5s;
+  pointer-events: none;
+}
+.lamp-panel.lit .lamp-glow { opacity: 1; }
+
+.light-cone {
+  position: absolute;
+  top: 120px;
+  width: 0; height: 0;
+  border-left: 100px solid transparent;
+  border-right: 100px solid transparent;
+  border-top: 160px solid transparent;
+  opacity: 0;
+  transition: opacity .5s;
+  pointer-events: none;
+}
+.lamp-panel.lit .light-cone {
+  opacity: 1;
+  border-top-color: rgba(255,240,180,.04);
+}
+
+/* Brand */
+.lamp-brand { text-align: center; z-index: 1; }
+.lamp-brand .logo-icon { color: #00d4ff; font-size: 20px; margin-right: 6px; }
+.lamp-brand .logo-text { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+.lamp-brand .logo-accent { color: #00d4ff; }
+.lamp-brand p { font-size: 14px; color: rgba(240,244,255,.4); margin-top: 8px; }
+
+/* Quote area */
+.lamp-quote { text-align: center; max-width: 320px; min-height: 60px; z-index: 1; }
+.dim-text { font-size: 14px; color: rgba(255,255,255,.2); }
+.quote-on p { font-size: 15px; color: rgba(255,255,255,.7); font-style: italic; line-height: 1.6; }
+.quote-on cite { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 8px; display: block; }
+.quote-on { animation: fadeUp .6s ease; }
+
+/* ── Auth Panel ───────────────────────────────────────────────────────────── */
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px;
+  background: #040810;
+}
+.auth-panel-inner { width: 100%; max-width: 400px; }
+
+/* Status bar */
+.lamp-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-size: 13px;
+  color: rgba(240,244,255,.4);
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all .4s;
+}
+.status-dot.off { background: rgba(255,255,255,.2); }
+.status-dot.on { background: #00c864; box-shadow: 0 0 10px rgba(0,200,100,.5); animation: pulse 2s infinite; }
+
+/* Forms Container - hidden until lamp on */
+.forms-container {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity .5s, transform .5s;
+}
+.forms-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+/* Tabs */
+.auth-tabs {
+  display: flex;
+  position: relative;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(240,244,255,.5);
+  border-radius: 9px;
+  z-index: 1;
+  transition: color .3s;
+}
+.auth-tab.active { color: #fff; }
+.tab-slider {
+  position: absolute;
+  top: 4px; left: 4px;
+  width: calc(50% - 4px); height: calc(100% - 8px);
+  background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+  border-radius: 9px;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  z-index: 0;
+}
+.tab-slider.right { transform: translateX(calc(100% + 0px)); }
+
+/* Auth forms */
+.auth-form { display: flex; flex-direction: column; gap: 18px; }
+.auth-form.hidden { display: none; }
+.form-header h2 { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.form-header p { font-size: 14px; color: rgba(240,244,255,.5); }
+
+.toggle-pwd {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: rgba(240,244,255,.4);
+  transition: color .2s;
+  padding: 0;
+}
+.toggle-pwd:hover { color: rgba(240,244,255,.8); }
+
+.form-error {
+  padding: 10px 14px;
+  background: rgba(255,80,80,.1);
+  border: 1px solid rgba(255,80,80,.3);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #ff7070;
+}
+.form-footer { text-align: center; font-size: 13px; color: rgba(240,244,255,.4); }
+.form-footer a { color: #00d4ff; cursor: pointer; font-weight: 600; }
+.form-footer a:hover { text-decoration: underline; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-layout { grid-template-columns: 1fr; }
+  .lamp-panel { display: none; }
+  .auth-panel { padding: 32px 24px; }
+  .forms-container { opacity: 1; transform: none; pointer-events: all; }
+  .lamp-status { display: none; }
+}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}FitAI — StyleBot AI Fashion Assistant{% endblock %}
+
+{% block content %}
+<section class="chatbot-page">
+  <div class="chat-layout">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+      <div class="sidebar-brand">
+        <div class="bot-avatar-lg">✦</div>
+        <h3>StyleBot</h3>
+        <p>Your AI Fashion Expert</p>
+      </div>
+      <div class="sidebar-status">
+        <span class="online-dot"></span>
+        <span>Online & Ready</span>
+      </div>
+      <div class="quick-prompts">
+        <h4>Quick Topics</h4>
+        <button class="prompt-chip" onclick="sendPrompt('What should I wear for a job interview?')">💼 Job Interview</button>
+        <button class="prompt-chip" onclick="sendPrompt('Give me winter outfit ideas')">❄️ Winter Outfits</button>
+        <button class="prompt-chip" onclick="sendPrompt('Best summer casual looks')">☀️ Summer Style</button>
+        <button class="prompt-chip" onclick="sendPrompt('Streetwear outfit ideas for men')">🔥 Streetwear</button>
+        <button class="prompt-chip" onclick="sendPrompt('Elegant evening outfit suggestions')">✨ Evening Wear</button>
+        <button class="prompt-chip" onclick="sendPrompt('How do I style gym clothes to look good?')">💪 Athletic Wear</button>
+        <button class="prompt-chip" onclick="sendPrompt('What colors suit my skin tone?')">🎨 Color Matching</button>
+        <button class="prompt-chip" onclick="sendPrompt('Minimalist wardrobe essentials')">⬜ Minimalism</button>
+      </div>
+      <div class="sidebar-tip">
+        <span>💡</span>
+        <p>Ask about outfits, sizes, colors, occasions, or seasonal trends!</p>
+      </div>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="bot-avatar-sm">✦</div>
+          <div>
+            <h4>StyleBot</h4>
+            <span class="typing-indicator" id="typingIndicator" style="display:none">
+              <span></span><span></span><span></span> typing...
+            </span>
+            <span id="botStatus">Powered by AI · Fashion Expert</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearChat()">🗑 Clear</button>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-container" id="messagesContainer">
+        <div class="message bot-message">
+          <div class="msg-avatar">✦</div>
+          <div class="msg-bubble">
+            <p>Hey! I'm StyleBot, your personal AI fashion assistant. 👗</p>
+            <p>I can help with outfit ideas, seasonal looks, body-type styling, color matching, and more. What are you looking to wear today?</p>
+          </div>
+          <div class="msg-time">Just now</div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="chat-input-wrap">
+          <textarea id="chatInput" placeholder="Ask about outfits, styles, occasions..." rows="1"
+                    onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <span id="sendIcon">➤</span>
+            <div class="btn-spinner hidden" id="chatSpinner"></div>
+          </button>
+        </div>
+        <p class="chat-disclaimer">Powered by AI. Responses are style suggestions, not professional fashion advice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+{% endblock %}

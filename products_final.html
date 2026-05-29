@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}FitAI — AI-Curated Fashion Products{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="section-badge">Product Catalog</div>
+  <h1 class="page-title">AI-Curated <span class="gradient-text">Fashion</span></h1>
+  <p class="page-subtitle">Every product tagged with AI compatibility scores. Discover pieces curated for your body type and style profile.</p>
+</section>
+
+<!-- Filters -->
+<section class="products-section">
+  <div class="filter-bar">
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab active" data-cat="all">All</button>
+      <button class="filter-tab" data-cat="casual">Casual</button>
+      <button class="filter-tab" data-cat="formal">Formal</button>
+      <button class="filter-tab" data-cat="streetwear">Streetwear</button>
+      <button class="filter-tab" data-cat="athletic">Athletic</button>
+      <button class="filter-tab" data-cat="evening">Evening</button>
+      <button class="filter-tab" data-cat="minimalist">Minimalist</button>
+    </div>
+    <div class="filter-right">
+      <div class="search-wrap">
+        <span>🔍</span>
+        <input type="text" id="productSearch" placeholder="Search products...">
+      </div>
+      <select id="sortSelect" class="form-select sm">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="products-grid" id="productsGrid">
+    <div class="loading-products">
+      <div class="loader-ring"></div>
+      <p>Loading AI-curated products...</p>
+    </div>
+  </div>
+
+  <!-- Load More -->
+  <div class="load-more-wrap" id="loadMoreWrap" style="display:none">
+    <button class="btn btn-ghost" id="loadMoreBtn">Load More Products</button>
+  </div>
+</section>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeProductModal()">✕</button>
+    <div class="modal-visual" id="modalVisual"></div>
+    <div class="modal-body">
+      <div class="modal-badges" id="modalBadges"></div>
+      <h2 id="modalName"></h2>
+      <div class="modal-price" id="modalPrice"></div>
+      <p id="modalDesc"></p>
+      <div class="modal-meta">
+        <div class="modal-rating" id="modalRating"></div>
+        <div class="modal-reviews" id="modalReviews"></div>
+      </div>
+      <div class="size-selector">
+        <label>Select Size</label>
+        <div class="sizes-row" id="modalSizes"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary btn-full" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="btn btn-ghost" id="modalFavBtn" onclick="toggleFav()">♡ Favorite</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/products.js') }}"></script>
+{% endblock %}

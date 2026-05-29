@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}StyleIQ — Profile Settings{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+
+  <!-- Page Header -->
+  <div style="margin-bottom:36px">
+    <div class="section-badge">Account</div>
+    <h1 class="page-title" style="text-align:left;padding:0;margin-top:10px">Profile <span class="gradient-text">Settings</span></h1>
+    <p style="color:var(--text-2);font-size:15px;margin-top:8px">Manage your account, style preferences, and personal measurements.</p>
+  </div>
+
+  <!-- Profile Header Card -->
+  <div class="profile-header">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar" id="avatarDisplay">
+        {{ session.get('username', 'U')[0].upper() }}
+      </div>
+      <div class="profile-avatar-edit" title="Change avatar">✏️</div>
+    </div>
+    <div class="profile-meta">
+      <h2 id="displayUsername">{{ session.get('username', 'User') }}</h2>
+      <p id="displayEmail" style="color:var(--text-2)">Loading...</p>
+      <div class="profile-badges">
+        <span class="profile-badge pb-member">✦ StyleIQ Member</span>
+        <span class="profile-badge pb-ai">🤖 AI Predictions Active</span>
+        <span id="planBadge" class="profile-badge" style="background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold)">⭐ Free Plan</span>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <strong id="psPredictions">—</strong>
+        <span>Predictions</span>
+      </div>
+      <div class="profile-stat">
+        <strong id="psFavorites">—</strong>
+        <span>Favorites</span>
+      </div>
+      <div class="profile-stat">
+        <strong id="psChats">—</strong>
+        <span>Chats</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Grid -->
+  <div class="profile-grid">
+
+    <!-- Personal Info -->
+    <div class="profile-section">
+      <h3>👤 Personal Information</h3>
+      <div class="profile-field">
+        <label>Username</label>
+        <input type="text" id="pfUsername" value="{{ session.get('username','') }}" disabled>
+      </div>
+      <div class="profile-field">
+        <label>Full Name</label>
+        <input type="text" id="pfFullName" placeholder="Your full name">
+      </div>
+      <div class="profile-field">
+        <label>Email Address</label>
+        <input type="email" id="pfEmail" placeholder="you@email.com">
+      </div>
+      <div class="profile-field">
+        <label>Location</label>
+        <input type="text" id="pfLocation" placeholder="City, Country">
+      </div>
+      <div class="profile-field">
+        <label>Date of Birth</label>
+        <input type="date" id="pfDob">
+      </div>
+    </div>
+
+    <!-- Body Measurements -->
+    <div class="profile-section">
+      <h3>📏 Body Measurements</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="profile-field">
+          <label>Height (cm)</label>
+          <input type="number" id="pfHeight" placeholder="170" min="140" max="220">
+        </div>
+        <div class="profile-field">
+          <label>Weight (kg)</label>
+          <input type="number" id="pfWeight" placeholder="65" min="30" max="200">
+        </div>
+        <div class="profile-field">
+          <label>Age</label>
+          <input type="number" id="pfAge" placeholder="25" min="13" max="80">
+        </div>
+        <div class="profile-field">
+          <label>Gender</label>
+          <select id="pfGender" class="form-select">
+            <option value="">Select</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Non-binary / Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="profile-field" style="margin-top:4px">
+        <label>Body Type</label>
+        <select id="pfBodyType" class="form-select">
+          <option value="">Select body type</option>
+          <option value="slim">Slim</option>
+          <option value="athletic">Athletic</option>
+          <option value="average">Average</option>
+          <option value="muscular">Muscular</option>
+          <option value="heavy">Heavy</option>
+          <option value="hourglass">Hourglass</option>
+          <option value="petite">Petite</option>
+          <option value="curvy">Curvy</option>
+        </select>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:var(--grad-soft);border:1px solid var(--border-em);border-radius:var(--radius-sm)">
+        <div style="font-size:12px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Live BMI Preview</div>
+        <div style="display:flex;gap:16px;align-items:center">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--em)" id="profileBMI">—</span>
+          <span style="font-size:13px;color:var(--text-2)" id="profileBMICat">Enter height & weight</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Style Preferences -->
+    <div class="profile-section">
+      <h3>🎨 Style Preferences</h3>
+      <div class="profile-field">
+        <label>Favourite Styles (select all that apply)</label>
+        <div class="style-prefs" id="stylePrefs">
+          {% for style in ['Minimalist','Streetwear','Casual Chic','Athletic','Formal','Bohemian','Elegant','Vintage'] %}
+          <button class="style-pref-btn" data-style="{{ style }}" onclick="toggleStylePref(this)">{{ style }}</button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="profile-field" style="margin-top:16px">
+        <label>Budget Range</label>
+        <select id="pfBudget" class="form-select">
+          <option value="budget">Budget ($0–$50)</option>
+          <option value="mid" selected>Mid-range ($50–$150)</option>
+          <option value="premium">Premium ($150–$400)</option>
+          <option value="luxury">Luxury ($400+)</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Shopping Frequency</label>
+        <select id="pfShopping" class="form-select">
+          <option value="rarely">Rarely (once a year)</option>
+          <option value="seasonal" selected>Seasonally (4x/year)</option>
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Preferred Occasion</label>
+        <select id="pfOccasion" class="form-select">
+          <option value="casual">Everyday Casual</option>
+          <option value="work">Work / Office</option>
+          <option value="formal">Formal Events</option>
+          <option value="mixed" selected>Mixed / All</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Notifications & Privacy -->
+    <div class="profile-section">
+      <h3>🔔 Notifications & Privacy</h3>
+
+      {% for item in [
+        ('notifEmail','Email style recommendations','emailNotif'),
+        ('notifTrends','Weekly trend reports','trendNotif'),
+        ('notifPredictions','Prediction summary digest','predNotif'),
+        ('notifNew','New collection alerts','newNotif'),
+        ('privHistory','Save prediction history','saveHistory'),
+        ('privChat','Store chat history','storeChat'),
+        ('privAnalytics','Share anonymous analytics','shareAnalytics'),
+      ] %}
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:14px;font-weight:500">{{ item[1] }}</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px">{{ item[2] }}</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="{{ item[0] }}" {% if loop.index <= 4 %}checked{% endif %}>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Change Password -->
+    <div class="profile-section">
+      <h3>🔒 Security</h3>
+      <div class="profile-field">
+        <label>Current Password</label>
+        <input type="password" id="curPwd" placeholder="••••••••">
+      </div>
+      <div class="profile-field">
+        <label>New Password</label>
+        <input type="password" id="newPwd" placeholder="min. 8 characters">
+      </div>
+      <div class="profile-field">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmPwd" placeholder="repeat new password">
+      </div>
+      <div id="pwdMsg" class="form-error hidden" style="margin-top:4px"></div>
+      <button class="btn btn-ghost btn-full" style="margin-top:16px" onclick="changePassword()">🔒 Update Password</button>
+
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Active Sessions</div>
+        <div style="padding:12px 16px;background:var(--surface);border-radius:var(--radius-sm);font-size:13px;color:var(--text-2);display:flex;justify-content:space-between">
+          <span>🌐 This browser session</span>
+          <span style="color:var(--em)">Active now</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="profile-section danger-zone">
+      <h3>⚠️ Danger Zone</h3>
+      <p style="font-size:14px;color:var(--text-2);margin-bottom:20px;line-height:1.65">These actions are irreversible. Please be absolutely certain before proceeding.</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button class="danger-btn" onclick="confirmClear('predictions')">🗑 Clear All Prediction History</button>
+        <button class="danger-btn" onclick="confirmClear('favorites')">💔 Clear All Favourites</button>
+        <button class="danger-btn" onclick="confirmClear('chat')">💬 Clear Chat History</button>
+        <button class="danger-btn" style="color:#ff3030;border-color:rgba(255,48,48,.35)" onclick="confirmDeleteAccount()">❌ Delete My Account</button>
+      </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div class="save-bar">
+      <button class="btn btn-ghost" onclick="resetForm()">↺ Discard Changes</button>
+      <button class="btn btn-primary" onclick="saveProfile()">
+        <span id="saveBtnText">Save All Changes</span>
+        <div class="btn-spinner hidden" id="saveSpinner"></div>
+      </button>
+    </div>
+
+  </div><!-- /profile-grid -->
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Toggle Switch */
+.toggle-switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.1);border:1px solid var(--border);border-radius:13px;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.3s}
+.toggle-switch input:checked + .toggle-slider{background:var(--em);border-color:var(--em)}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(20px)}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}StyleIQ — AI Fashion Intelligence Platform{% endblock %}
+{% block content %}
+
+<!-- ══ HERO ════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-eyebrow animate-in">
+    <span class="hero-badge-dot"></span>
+    IBM AI Project · Fashion Intelligence v2.0
+  </div>
+
+  <h1 class="hero-title animate-in" style="animation-delay:.08s">
+    <span class="line-plain">Your personal</span>
+    <span class="line-grad">AI fashion stylist</span>
+  </h1>
+
+  <p class="hero-sub animate-in" style="animation-delay:.16s">
+    Predict your perfect style with machine learning. Discover AI-curated collections.
+    Chat with a real-time fashion expert. All in one platform.
+  </p>
+
+  <div class="hero-actions animate-in" style="animation-delay:.22s">
+    <a href="/predict-page" class="btn btn-primary btn-lg">Start AI Prediction →</a>
+    <a href="/products"     class="btn btn-secondary btn-lg">Browse Collections</a>
+  </div>
+
+  <div class="hero-stats animate-in" style="animation-delay:.3s">
+    <div class="h-stat">
+      <span class="h-stat-num">97%</span>
+      <span class="h-stat-label">ML Accuracy</span>
+    </div>
+    <div class="h-stat-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-num">50K+</span>
+      <span class="h-stat-label">Users styled</span>
+    </div>
+    <div class="h-stat-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-num">7</span>
+      <span class="h-stat-label">Style profiles</span>
+    </div>
+    <div class="h-stat-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-num">6</span>
+      <span class="h-stat-label">DB collections</span>
+    </div>
+  </div>
+
+  <!-- Showcase -->
+  <div class="hero-showcase animate-in" style="animation-delay:.4s">
+    <div class="hero-showcase-inner">
+      <div class="showcase-card">
+        <div class="sc-tag">👗 Style Match</div>
+        <div class="sc-title">Minimalist</div>
+        <div class="sc-meta"><span>Size M</span><span>BMI 22.4</span></div>
+        <div class="sc-bar-wrap">
+          <div class="sc-bar-label"><span>Match score</span><span>89%</span></div>
+          <div class="sc-bar"><div class="sc-bar-fill" style="width:89%"></div></div>
+        </div>
+      </div>
+      <div class="showcase-card featured">
+        <div class="sc-tag">✦ AI Recommendation</div>
+        <div class="sc-title">Elegant</div>
+        <div class="sc-meta"><span>Size S</span><span>BMI 21.1</span></div>
+        <div class="sc-conf">
+          <div class="conf-badge">94%</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">Confidence Score</div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:2px">RandomForest ML</div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-card">
+        <div class="sc-tag">🔥 Trending</div>
+        <div class="sc-title">Streetwear</div>
+        <div class="sc-meta"><span>Size L</span><span>BMI 24.8</span></div>
+        <div class="sc-bar-wrap">
+          <div class="sc-bar-label"><span>Match score</span><span>76%</span></div>
+          <div class="sc-bar"><div class="sc-bar-fill" style="width:76%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TECH STRIP ══════════════════════════════════════════════════════════ -->
+<div class="tech-strip">
+  <div class="tech-strip-inner">
+    {% for icon,name,role in [('🐍','Python 3.11','Backend'),('🍃','MongoDB Atlas','Database'),('🤖','RandomForest','ML Model'),('⚡','OpenAI GPT','AI Chat'),('🌶','Flask 3.0','Framework'),('☁️','Vercel','Deployment')] %}
+    <div class="tech-badge">
+      <span class="tb-icon">{{ icon }}</span>
+      <div>
+        <div class="tb-name">{{ name }}</div>
+        <div class="tb-role">{{ role }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ══ FEATURES ════════════════════════════════════════════════════════════ -->
+<section class="features-section">
+  <div class="section-header">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Platform Features</div>
+    <h2 class="section-title">Everything you need to<br><span class="gradient-text">dress with intelligence</span></h2>
+    <p class="section-sub">Six powerful AI features working together to give you the most personalized fashion experience ever built.</p>
+  </div>
+  <div class="features-grid">
+    {% set features = [
+      ('🎯','AI Style Prediction','RandomForest ML predicts your perfect style and size with 97% accuracy using 5 biometric inputs stored in MongoDB.','Try Predictor →','/predict-page'),
+      ('🛍️','Smart Collections','Browse 24+ AI-curated fashion products. Every item tagged with style compatibility scores from our ML engine.','Browse →','/products'),
+      ('💬','StyleBot Assistant','Real-time fashion advice powered by OpenAI GPT with intelligent rule-based fallback for 15+ fashion contexts.','Chat Now →','/chatbot'),
+      ('📊','Analytics Dashboard','Track your style evolution with Chart.js visualisations. All prediction history stored in MongoDB Atlas.','View Dashboard →','/dashboard'),
+      ('👗','Wardrobe Generator','AI generates a complete 7-day outfit plan tailored to your body type, style profile, and occasion type.','Generate →','/wardrobe'),
+      ('⚙️','Profile Settings','Personalise your StyleIQ experience. Set measurements, style preferences, notifications, and security settings.','Edit Profile →','/profile'),
+    ] %}
+    {% for icon,title,desc,link,url in features %}
+    <div class="feature-card fade-up">
+      <div class="feature-icon-wrap">{{ icon }}</div>
+      <h3>{{ title }}</h3>
+      <p>{{ desc }}</p>
+      <a href="{{ url }}" class="feature-link">{{ link }}</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ════════════════════════════════════════════════════════ -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="section-header">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>How it works</div>
+      <h2 class="section-title">Styled in <span class="gradient-text">3 steps</span></h2>
+    </div>
+    <div class="steps-row">
+      <div class="step fade-up">
+        <div class="step-num">1</div>
+        <div class="step-icon">📏</div>
+        <h3>Enter measurements</h3>
+        <p>Height, weight, age, gender, body type. Five features fed into our RandomForest classifier.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step fade-up" style="transition-delay:.1s">
+        <div class="step-num">2</div>
+        <div class="step-icon">🤖</div>
+        <h3>AI runs inference</h3>
+        <p>ML model trained on 2,000 records produces style, size, confidence score, and outfit plan instantly.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step fade-up" style="transition-delay:.2s">
+        <div class="step-num">3</div>
+        <div class="step-icon">✨</div>
+        <h3>Get your style report</h3>
+        <p>Full profile: colour palette, outfit ideas, seasonal tips — all saved to MongoDB Atlas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ML SECTION ══════════════════════════════════════════════════════════ -->
+<section class="ml-section">
+  <div class="section-header" style="margin-bottom:40px">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Machine Learning</div>
+    <h2 class="section-title">Inside the <span class="gradient-text">AI engine</span></h2>
+  </div>
+  <div class="ml-grid">
+    {% for title,sub,desc in [
+      ('RandomForest Classifier','scikit-learn','100 decision trees trained on 2,000 synthetic biometric records. Predicts clothing size XS–XXL with BMI-derived feature engineering.'),
+      ('Style Rule Engine','Python Logic','Body-type × gender mapping matrix with age-weighted style preferences. Produces primary + 3 alternative recommendations.'),
+      ('MongoDB Atlas','PyMongo 4.8','6 collections: users, predictions, favorites, products, chatbot_history, analytics. Real-time CRUD with cloud-native storage.'),
+      ('OpenAI Integration','GPT-3.5-turbo','Fashion-specialised system prompt with rule-based intelligent fallback. Handles 15+ fashion contexts without API dependency.'),
+    ] %}
+    <div class="ml-card fade-up">
+      <div class="ml-icon">🔬</div>
+      <div>
+        <div class="ml-card-title">{{ title }}</div>
+        <div class="ml-card-sub">{{ sub }}</div>
+        <div class="ml-card-desc">{{ desc }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ══ CTA ════════════════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="eyebrow" style="margin:0 auto 20px"><span class="eyebrow-dot"></span>Get started free</div>
+    <h2>Ready to meet your<br><span class="gradient-text">AI stylist?</span></h2>
+    <p>Join thousands discovering their perfect style. Free account, no credit card required.</p>
+    <div class="cta-actions">
+      <a href="/predict-page" class="btn btn-primary btn-lg">Start AI Prediction →</a>
+      <a href="/chatbot"      class="btn btn-secondary btn-lg">Chat with StyleBot</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+flask==3.0.3
+pymongo==4.8.0
+flask-session==0.8.0
+werkzeug==3.0.3
+scikit-learn==1.5.1
+numpy==1.26.4
+python-dotenv==1.0.1
+openai==0.28.0
+gunicorn==22.0.0
+dnspython==2.6.1

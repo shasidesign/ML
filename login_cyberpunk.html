@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StyleIQ — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{background:#020008;color:#f0f0ff;font-family:'Space Grotesk',sans-serif;cursor:none}
+
+    /* ── Custom Cursor ── */
+    #cursor{position:fixed;width:12px;height:12px;background:#00d4ff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s;box-shadow:0 0 20px #00d4ff,0 0 40px rgba(0,212,255,.5)}
+    #cursor-trail{position:fixed;width:36px;height:36px;border:1px solid rgba(0,212,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .12s ease,top .12s ease;box-shadow:0 0 15px rgba(0,212,255,.2)}
+    #cursor-glow{position:fixed;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,255,.06),transparent 70%);border-radius:50%;pointer-events:none;z-index:9997;transform:translate(-50%,-50%);transition:left .08s,top .08s}
+
+    /* ── Canvas ── */
+    #bgCanvas{position:fixed;inset:0;z-index:0}
+    #lightningCanvas{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+    /* ── Back Button ── */
+    .back-btn{position:fixed;top:24px;left:24px;z-index:100;padding:8px 20px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);border-radius:100px;font-size:12px;font-weight:700;color:rgba(0,212,255,.8);transition:all .2s;text-decoration:none;font-family:'Orbitron',sans-serif;letter-spacing:.08em;cursor:none}
+    .back-btn:hover{background:rgba(0,212,255,.15);color:#00d4ff;box-shadow:0 0 20px rgba(0,212,255,.3)}
+
+    /* ── Logo ── */
+    .login-logo{position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:10px;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;text-transform:uppercase}
+    .logo-gem{width:32px;height:32px;background:linear-gradient(135deg,#00d4ff,#b400ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 20px rgba(0,212,255,.5)}
+    .logo-accent{color:#b400ff}
+
+    /* ── Scene ── */
+    .scene{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;perspective:1200px}
+
+    /* ── Card Flip Container ── */
+    .card-flip{width:420px;height:600px;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,0,.2,1)}
+    .card-flip.flipped{transform:rotateY(180deg)}
+    .card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:24px;padding:48px 40px;display:flex;flex-direction:column;background:rgba(2,0,20,.85);backdrop-filter:blur(24px);border:1px solid rgba(0,212,255,.25);box-shadow:0 0 60px rgba(0,212,255,.1),0 0 120px rgba(180,0,255,.06),inset 0 1px 0 rgba(255,255,255,.06)}
+    .card-back{transform:rotateY(180deg);border-color:rgba(180,0,255,.25);box-shadow:0 0 60px rgba(180,0,255,.12),inset 0 1px 0 rgba(255,255,255,.06)}
+
+    /* Animated border */
+    .card-face::before{content:'';position:absolute;inset:-1px;border-radius:25px;background:linear-gradient(135deg,rgba(0,212,255,.5),rgba(180,0,255,.5),rgba(255,0,200,.3),rgba(0,212,255,.5));background-size:300% 300%;animation:borderAnim 4s ease infinite;z-index:-1;opacity:.6}
+    @keyframes borderAnim{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .card-face::after{content:'';position:absolute;inset:1px;border-radius:23px;background:rgba(2,0,20,.92);z-index:-1}
+
+    /* ── Form Header ── */
+    .form-head{text-align:center;margin-bottom:36px}
+    .form-icon{font-size:48px;margin-bottom:12px;display:block;animation:floatIcon 3s ease-in-out infinite}
+    @keyframes floatIcon{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .form-head h2{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#00d4ff,#b400ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .form-head p{font-size:12px;color:rgba(240,240,255,.45);margin-top:8px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+
+    /* ── Inputs ── */
+    .field{margin-bottom:20px;position:relative}
+    .field label{display:block;font-size:10px;font-weight:700;color:rgba(0,212,255,.6);text-transform:uppercase;letter-spacing:.15em;margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+    .field-wrap{position:relative}
+    .field-wrap input{width:100%;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:10px;padding:14px 46px 14px 16px;color:#f0f0ff;font-size:14px;outline:none;transition:all .3s;font-family:'Space Grotesk',sans-serif;cursor:none}
+    .field-wrap input:focus{border-color:rgba(0,212,255,.6);background:rgba(0,212,255,.07);box-shadow:0 0 0 3px rgba(0,212,255,.08),0 0 24px rgba(0,212,255,.12)}
+    .field-wrap input::placeholder{color:rgba(240,240,255,.2)}
+    .field-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:rgba(0,212,255,.4);cursor:none}
+    .toggle-eye{cursor:none;background:none;border:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:rgba(0,212,255,.4);padding:0;transition:color .2s}
+    .toggle-eye:hover{color:#00d4ff}
+
+    /* Scan line on focus */
+    .field-wrap::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,#00d4ff,#b400ff);border-radius:2px;transition:width .4s ease}
+    .field-wrap:focus-within::after{width:100%}
+
+    /* ── Error ── */
+    .err-box{display:none;padding:10px 14px;background:rgba(255,50,50,.08);border:1px solid rgba(255,50,50,.25);border-radius:8px;font-size:12px;color:#ff6060;margin-bottom:16px;font-family:'JetBrains Mono',monospace}
+
+    /* ── Submit Button ── */
+    .submit-btn{width:100%;padding:16px;border-radius:10px;font-size:13px;font-weight:900;font-family:'Orbitron',sans-serif;letter-spacing:.15em;text-transform:uppercase;background:linear-gradient(135deg,#00d4ff,#b400ff,#ff00c8);color:#fff;border:none;cursor:none;transition:all .3s;position:relative;overflow:hidden;margin-top:8px;box-shadow:0 0 24px rgba(0,212,255,.3)}
+    .submit-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .2s}
+    .submit-btn:hover::before{opacity:1}
+    .submit-btn:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(0,212,255,.5),0 0 80px rgba(180,0,255,.3)}
+    .submit-btn:active{transform:scale(.98)}
+    .btn-inner{display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-spinner{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Switch ── */
+    .switch-text{text-align:center;margin-top:24px;font-size:12px;color:rgba(240,240,255,.35);font-family:'JetBrains Mono',monospace}
+    .switch-text a{color:#00d4ff;cursor:none;font-weight:700;text-decoration:none;transition:text-shadow .2s}
+    .switch-text a:hover{text-shadow:0 0 12px #00d4ff}
+
+    /* ── Lightning overlay ── */
+    #lightningCanvas{opacity:0;transition:opacity .1s}
+    #lightningCanvas.active{opacity:1}
+
+    /* ── Success overlay ── */
+    #successOverlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;background:rgba(0,0,20,.9);flex-direction:column;gap:20px}
+    #successOverlay.show{display:flex;animation:fadeIn .3s}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .success-icon{font-size:80px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes popIn{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
+    .success-text{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#00d4ff,#b400ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .success-bar{width:200px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin-top:8px}
+    .success-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#b400ff);animation:fillBar 1.5s ease forwards}
+    @keyframes fillBar{from{width:0}to{width:100%}}
+
+    /* ── Matrix rain ── */
+    #matrixCanvas{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none}
+
+    /* Decorative rings */
+    .ring{position:fixed;border-radius:50%;border:1px solid;pointer-events:none;z-index:2}
+    .ring-1{width:500px;height:500px;border-color:rgba(0,212,255,.05);top:50%;left:50%;transform:translate(-50%,-50%);animation:rotateRing 20s linear infinite}
+    .ring-2{width:700px;height:700px;border-color:rgba(180,0,255,.04);top:50%;left:50%;transform:translate(-50%,-50%);animation:rotateRing 35s linear infinite reverse}
+    .ring-3{width:900px;height:900px;border-color:rgba(255,0,200,.03);top:50%;left:50%;transform:translate(-50%,-50%);animation:rotateRing 50s linear infinite}
+    @keyframes rotateRing{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+    /* Corner decorations */
+    .corner{position:fixed;width:60px;height:60px;pointer-events:none;z-index:5;opacity:.5}
+    .corner-tl{top:80px;left:20px;border-top:2px solid #00d4ff;border-left:2px solid #00d4ff}
+    .corner-tr{top:80px;right:20px;border-top:2px solid #b400ff;border-right:2px solid #b400ff}
+    .corner-bl{bottom:20px;left:20px;border-bottom:2px solid #b400ff;border-left:2px solid #b400ff}
+    .corner-br{bottom:20px;right:20px;border-bottom:2px solid #00d4ff;border-right:2px solid #00d4ff}
+
+    /* HUD text */
+    .hud{position:fixed;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,212,255,.3);pointer-events:none;z-index:5;letter-spacing:.1em}
+    .hud-tl{top:90px;left:90px}
+    .hud-tr{top:90px;right:90px;text-align:right}
+    .hud-bl{bottom:30px;left:30px}
+    .hud-br{bottom:30px;right:30px;text-align:right}
+    .hud-blink{animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:.3}50%{opacity:.8}}
+  </style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div id="cursor-glow"></div>
+
+<!-- Canvases -->
+<canvas id="matrixCanvas"></canvas>
+<canvas id="bgCanvas"></canvas>
+<canvas id="lightningCanvas"></canvas>
+
+<!-- Decorative Rings -->
+<div class="ring ring-1"></div>
+<div class="ring ring-2"></div>
+<div class="ring ring-3"></div>
+
+<!-- Corner HUD -->
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<div class="hud hud-tl">
+  SYS::STYLEIQ_AUTH<br>
+  <span class="hud-blink">● SECURE CONNECTION</span>
+</div>
+<div class="hud hud-tr">
+  IBM AI PROJECT<br>
+  v2.0 CYBERPUNK
+</div>
+<div class="hud hud-bl">FASHION_INTELLIGENCE</div>
+<div class="hud hud-br">ML_ENGINE::ACTIVE</div>
+
+<!-- Nav -->
+<a href="/" class="back-btn">← BACK</a>
+<div class="login-logo">
+  <div class="logo-gem">◆</div>
+  Style<span class="logo-accent">IQ</span>
+</div>
+
+<!-- 3D Card Scene -->
+<div class="scene">
+  <div class="card-flip" id="cardFlip">
+
+    <!-- FRONT: Login -->
+    <div class="card-face">
+      <div class="form-head">
+        <span class="form-icon">⚡</span>
+        <h2>Access System</h2>
+        <p>// enter your credentials</p>
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <div class="field-wrap">
+          <input type="text" id="loginUsername" placeholder="enter_username" autocomplete="username">
+          <span class="field-icon">👤</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="field-wrap">
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+          <button class="toggle-eye" onclick="togglePwd('loginPassword', this)" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <div class="err-box" id="loginErr"></div>
+      <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+        <span class="btn-inner">
+          <span id="loginBtnTxt">⚡ INITIATE LOGIN</span>
+          <div class="btn-spinner" id="loginSpin"></div>
+        </span>
+      </button>
+      <div class="switch-text">
+        No account? <a onclick="flipCard(true)">REGISTER →</a>
+      </div>
+    </div>
+
+    <!-- BACK: Register -->
+    <div class="card-face card-back">
+      <div class="form-head">
+        <span class="form-icon">🔮</span>
+        <h2>Create Profile</h2>
+        <p>// join the grid</p>
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <div class="field-wrap">
+          <input type="text" id="regUsername" placeholder="choose_username">
+          <span class="field-icon">👤</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <div class="field-wrap">
+          <input type="email" id="regEmail" placeholder="you@email.com">
+          <span class="field-icon">📡</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="field-wrap">
+          <input type="password" id="regPassword" placeholder="min 6 characters">
+          <button class="toggle-eye" onclick="togglePwd('regPassword', this)" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <div class="err-box" id="regErr"></div>
+      <button class="submit-btn" id="regBtn" onclick="doRegister()">
+        <span class="btn-inner">
+          <span id="regBtnTxt">🔮 CREATE ACCOUNT</span>
+          <div class="btn-spinner" id="regSpin"></div>
+        </span>
+      </button>
+      <div class="switch-text">
+        Have account? <a onclick="flipCard(false)">← LOGIN</a>
+      </div>
+    </div>
+
+  </div><!-- /card-flip -->
+</div><!-- /scene -->
+
+<!-- Success Overlay -->
+<div id="successOverlay">
+  <div class="success-icon">⚡</div>
+  <div class="success-text">Access Granted</div>
+  <div class="success-bar"><div class="success-fill"></div></div>
+</div>
+
+<script>
+/* ══ CUSTOM CURSOR ══════════════════════════════════════════════════════ */
+const cur = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+const glow = document.getElementById('cursor-glow');
+let mx = 0, my = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx + 'px';
+  cur.style.top  = my + 'px';
+  setTimeout(() => {
+    trail.style.left = mx + 'px';
+    trail.style.top  = my + 'px';
+  }, 60);
+  glow.style.left = mx + 'px';
+  glow.style.top  = my + 'px';
+});
+
+document.querySelectorAll('button, a, input').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cur.style.transform = 'translate(-50%,-50%) scale(2.5)';
+    cur.style.background = '#b400ff';
+    cur.style.boxShadow = '0 0 25px #b400ff, 0 0 50px rgba(180,0,255,.5)';
+    trail.style.borderColor = 'rgba(180,0,255,.5)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cur.style.transform = 'translate(-50%,-50%) scale(1)';
+    cur.style.background = '#00d4ff';
+    cur.style.boxShadow = '0 0 20px #00d4ff, 0 0 40px rgba(0,212,255,.5)';
+    trail.style.borderColor = 'rgba(0,212,255,.4)';
+  });
+});
+
+/* ══ MATRIX RAIN ════════════════════════════════════════════════════════ */
+(function() {
+  const c = document.getElementById('matrixCanvas');
+  const ctx = c.getContext('2d');
+  c.width = window.innerWidth; c.height = window.innerHeight;
+  const cols = Math.floor(c.width / 20);
+  const drops = Array(cols).fill(1);
+  const chars = 'アイウエオカキクケコ0123456789ABCDEF◆★⚡';
+  function draw() {
+    ctx.fillStyle = 'rgba(2,0,8,.05)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.fillStyle = '#00d4ff';
+    ctx.font = '14px JetBrains Mono';
+    drops.forEach((y, i) => {
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillStyle = i % 3 === 0 ? '#b400ff' : '#00d4ff';
+      ctx.globalAlpha = Math.random() * 0.5 + 0.1;
+      ctx.fillText(ch, i * 20, y * 20);
+      if (y * 20 > c.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+    ctx.globalAlpha = 1;
+  }
+  setInterval(draw, 60);
+})();
+
+/* ══ GALAXY BG ══════════════════════════════════════════════════════════ */
+(function() {
+  const c = document.getElementById('bgCanvas');
+  const ctx = c.getContext('2d');
+  c.width = window.innerWidth; c.height = window.innerHeight;
+  const stars = Array.from({length:120}, () => ({
+    x: Math.random()*c.width, y: Math.random()*c.height,
+    r: Math.random()*1.5+.2, o: Math.random()*.7+.1,
+    s: Math.random()*.015+.003, d: Math.random()>.5?1:-1,
+    col: ['#00d4ff','#b400ff','#ffffff'][Math.floor(Math.random()*3)]
+  }));
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    stars.forEach(s => {
+      s.o += s.s * s.d;
+      if (s.o > .9 || s.o < .05) s.d *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = s.col;
+      ctx.globalAlpha = s.o;
+      ctx.shadowBlur = s.r > 1 ? 8 : 0;
+      ctx.shadowColor = s.col;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══ LIGHTNING ENGINE ════════════════════════════════════════════════════ */
+const lCanvas = document.getElementById('lightningCanvas');
+const lCtx    = lCanvas.getContext('2d');
+lCanvas.width = window.innerWidth;
+lCanvas.height = window.innerHeight;
+
+function drawLightning(x1, y1, x2, y2, branches, depth) {
+  if (depth <= 0) return;
+  const mx = (x1+x2)/2 + (Math.random()-.5)*(Math.abs(x2-x1)+Math.abs(y2-y1))*.4;
+  const my = (y1+y2)/2 + (Math.random()-.5)*(Math.abs(x2-x1)+Math.abs(y2-y1))*.4;
+  lCtx.beginPath();
+  lCtx.moveTo(x1, y1);
+  lCtx.lineTo(mx, my);
+  lCtx.lineTo(x2, y2);
+  lCtx.strokeStyle = depth > 2 ? '#ffffff' : depth > 1 ? '#00d4ff' : '#b400ff';
+  lCtx.lineWidth = depth * .8;
+  lCtx.globalAlpha = depth * .25;
+  lCtx.shadowBlur = 20;
+  lCtx.shadowColor = '#00d4ff';
+  lCtx.stroke();
+  drawLightning(x1, y1, mx, my, branches, depth-1);
+  drawLightning(mx, my, x2, y2, branches, depth-1);
+  if (Math.random() > 0.6 && branches > 0) {
+    const bx = mx + (Math.random()-.5)*200;
+    const by = my + Math.random()*150;
+    drawLightning(mx, my, bx, by, branches-1, depth-1);
+  }
+}
+
+function triggerLightning(callback) {
+  const lc = document.getElementById('lightningCanvas');
+  lc.classList.add('active');
+  let flashes = 0;
+  const maxFlashes = 6;
+  function flash() {
+    if (flashes >= maxFlashes) {
+      lc.classList.remove('active');
+      if (callback) callback();
+      return;
+    }
+    lCtx.clearRect(0, 0, lCanvas.width, lCanvas.height);
+    const cx = lCanvas.width/2, top = 0, bot = lCanvas.height;
+    const spread = (Math.random()-.5)*300;
+    drawLightning(cx+spread, top, cx+spread*2, bot, 3, 4);
+    drawLightning(cx-spread, top, cx-spread*2, bot, 2, 3);
+    if (flashes === 0 || flashes === 2) {
+      lCtx.fillStyle = 'rgba(0,212,255,.04)';
+      lCtx.fillRect(0,0,lCanvas.width,lCanvas.height);
+    }
+    flashes++;
+    setTimeout(flash, flashes % 2 === 0 ? 80 : 40);
+  }
+  flash();
+}
+
+/* ══ CARD FLIP ══════════════════════════════════════════════════════════ */
+function flipCard(toRegister) {
+  const card = document.getElementById('cardFlip');
+  card.style.transition = 'transform .8s cubic-bezier(.4,0,.2,1)';
+  if (toRegister) {
+    card.style.transform = 'rotateY(180deg)';
+  } else {
+    card.style.transform = 'rotateY(0deg)';
+  }
+}
+window.flipCard = flipCard;
+
+/* ══ PASSWORD TOGGLE ════════════════════════════════════════════════════ */
+window.togglePwd = function(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+};
+
+/* ══ SHOW ERROR ═════════════════════════════════════════════════════════ */
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = '// ERROR: ' + msg;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'errShake .3s ease';
+}
+const errStyle = document.createElement('style');
+errStyle.textContent = '@keyframes errShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}';
+document.head.appendChild(errStyle);
+
+/* ══ SUCCESS ════════════════════════════════════════════════════════════ */
+function showSuccess(redirect) {
+  triggerLightning(() => {
+    const ov = document.getElementById('successOverlay');
+    ov.classList.add('show');
+    setTimeout(() => window.location.href = redirect, 1800);
+  });
+}
+
+/* ══ LOGIN ══════════════════════════════════════════════════════════════ */
+window.doLogin = async function() {
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value;
+  document.getElementById('loginErr').style.display = 'none';
+  if (!u || !p) { showErr('loginErr','All fields required'); return; }
+
+  const btn = document.getElementById('loginBtn');
+  document.getElementById('loginBtnTxt').textContent = 'AUTHENTICATING...';
+  document.getElementById('loginSpin').style.display = 'block';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch('/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const data = await res.json();
+    if (data.success) {
+      showSuccess('/dashboard');
+    } else {
+      showErr('loginErr', data.error || 'Invalid credentials');
+      document.getElementById('loginBtnTxt').textContent = '⚡ INITIATE LOGIN';
+      document.getElementById('loginSpin').style.display = 'none';
+      btn.disabled = false;
+    }
+  } catch {
+    showErr('loginErr','Network error. Try again.');
+    document.getElementById('loginBtnTxt').textContent = '⚡ INITIATE LOGIN';
+    document.getElementById('loginSpin').style.display = 'none';
+    btn.disabled = false;
+  }
+};
+
+/* ══ REGISTER ═══════════════════════════════════════════════════════════ */
+window.doRegister = async function() {
+  const u = document.getElementById('regUsername').value.trim();
+  const e = document.getElementById('regEmail').value.trim();
+  const p = document.getElementById('regPassword').value;
+  document.getElementById('regErr').style.display = 'none';
+  if (!u || !e || !p) { showErr('regErr','All fields required'); return; }
+  if (p.length < 6)   { showErr('regErr','Password min 6 characters'); return; }
+
+  const btn = document.getElementById('regBtn');
+  document.getElementById('regBtnTxt').textContent = 'CREATING...';
+  document.getElementById('regSpin').style.display = 'block';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch('/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,email:e,password:p})});
+    const data = await res.json();
+    if (data.success) {
+      showSuccess('/dashboard');
+    } else {
+      showErr('regErr', data.error || 'Registration failed');
+      document.getElementById('regBtnTxt').textContent = '🔮 CREATE ACCOUNT';
+      document.getElementById('regSpin').style.display = 'none';
+      btn.disabled = false;
+    }
+  } catch {
+    showErr('regErr','Network error. Try again.');
+    document.getElementById('regBtnTxt').textContent = '🔮 CREATE ACCOUNT';
+    document.getElementById('regSpin').style.display = 'none';
+    btn.disabled = false;
+  }
+};
+
+/* ══ ENTER KEY ══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const card = document.getElementById('cardFlip');
+  if (card.style.transform === 'rotateY(180deg)') doRegister();
+  else doLogin();
+});
+
+/* ══ TYPEWRITER HUD ════════════════════════════════════════════════════ */
+const msgs = ['FASHION_AI_ONLINE','ML_MODEL_READY','MONGODB_CONNECTED','OPENAI_STANDBY','SYSTEM_NOMINAL'];
+let mi = 0;
+function typeMsg() {
+  const el = document.querySelector('.hud-bl');
+  if (!el) return;
+  const msg = msgs[mi % msgs.length];
+  let i = 0;
+  el.textContent = '';
+  const t = setInterval(() => {
+    el.textContent += msg[i++];
+    if (i >= msg.length) { clearInterval(t); setTimeout(typeMsg, 2000); mi++; }
+  }, 60);
+}
+typeMsg();
+</script>
+</body>
+</html>
